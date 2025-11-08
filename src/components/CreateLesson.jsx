@@ -122,7 +122,7 @@ function CreateLesson({ lesson, onSave, onCancel }) {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="e.g., The English Alphabet"
-            className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            className="w-full px-4 py-2.5 bg-white text-gray-900 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
           />
         </div>
 
@@ -136,7 +136,7 @@ function CreateLesson({ lesson, onSave, onCancel }) {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Brief description of the lesson"
-            className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            className="w-full px-4 py-2.5 bg-white text-gray-900 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
           />
         </div>
 
@@ -149,7 +149,7 @@ function CreateLesson({ lesson, onSave, onCancel }) {
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full px-4 py-2.5 bg-white text-gray-900 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             >
               {categories.map((cat) => (
                 <option key={cat} value={cat}>
@@ -166,7 +166,7 @@ function CreateLesson({ lesson, onSave, onCancel }) {
             <select
               value={level}
               onChange={(e) => setLevel(e.target.value)}
-              className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full px-4 py-2.5 bg-white text-gray-900 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             >
               {levels.map((lvl) => (
                 <option key={lvl} value={lvl}>
@@ -185,7 +185,7 @@ function CreateLesson({ lesson, onSave, onCancel }) {
               value={duration}
               onChange={(e) => setDuration(e.target.value)}
               placeholder="e.g., 15 min"
-              className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full px-4 py-2.5 bg-white text-gray-900 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             />
           </div>
         </div>
@@ -231,7 +231,7 @@ function CreateLesson({ lesson, onSave, onCancel }) {
             onChange={(e) => setContent(e.target.value)}
             placeholder="# Lesson Title&#10;&#10;## Introduction&#10;Content goes here...&#10;&#10;## Examples&#10;- Example 1&#10;- Example 2"
             rows={15}
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent font-mono text-sm"
+            className="w-full px-4 py-3 bg-white text-gray-900 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent font-mono text-sm"
           />
           <p className="text-xs text-gray-500 mt-2">
             Use Markdown formatting: # for headings, ** for bold, - for lists, etc.

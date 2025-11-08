@@ -5,6 +5,8 @@ import {
   FaCheckCircle,
   FaTimesCircle,
   FaClipboardList,
+  FaChartBar,
+  FaTimes,
 } from "react-icons/fa";
 import { toast } from "react-toastify";
 
@@ -14,6 +16,7 @@ function ResultsView({ onBack }) {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedResult, setExpandedResult] = useState(null);
+  const [detailedAnalysis, setDetailedAnalysis] = useState(null);
 
   useEffect(() => {
     fetchResults();
@@ -61,6 +64,14 @@ function ResultsView({ onBack }) {
       hour: "2-digit",
       minute: "2-digit",
     });
+  };
+
+  const handleViewAnalysis = (result) => {
+    setDetailedAnalysis(result);
+  };
+
+  const closeAnalysis = () => {
+    setDetailedAnalysis(null);
   };
 
   if (loading) {
@@ -142,7 +153,9 @@ function ResultsView({ onBack }) {
                       <th className="px-6 py-4 text-center text-sm font-semibold">
                         Wrong
                       </th>
-                      <th className="px-6 py-4 text-center text-sm font-semibold"></th>
+                      <th className="px-6 py-4 text-center text-sm font-semibold">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
@@ -192,13 +205,22 @@ function ResultsView({ onBack }) {
                           </div>
                         </td>
                         <td className="px-6 py-4 text-center">
-                          <button
-                            onClick={() => handleDelete(result._id)}
-                            className="p-2 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg transition-colors"
-                            title="Delete result"
-                          >
-                            <FaTrash />
-                          </button>
+                          <div className="flex items-center justify-center gap-2">
+                            <button
+                              onClick={() => handleViewAnalysis(result)}
+                              className="p-2 bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-lg transition-colors"
+                              title="View detailed analysis"
+                            >
+                              <FaChartBar />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(result._id)}
+                              className="p-2 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg transition-colors"
+                              title="Delete result"
+                            >
+                              <FaTrash />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -269,12 +291,148 @@ function ResultsView({ onBack }) {
                       <div className="text-xs text-gray-500">Wrong</div>
                     </div>
                   </div>
+
+                  <button
+                    onClick={() => handleViewAnalysis(result)}
+                    className="w-full mt-3 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center justify-center gap-2 font-semibold text-sm"
+                  >
+                    <FaChartBar />
+                    View Detailed Analysis
+                  </button>
                 </div>
               ))}
             </div>
           </>
         )}
       </div>
+
+      {/* Detailed Analysis Modal */}
+      {detailedAnalysis && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 rounded-t-2xl">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold mb-1">
+                    Detailed Analysis
+                  </h2>
+                  <p className="text-blue-100 text-sm">
+                    {detailedAnalysis.firstName} {detailedAnalysis.lastName} - {detailedAnalysis.testName}
+                  </p>
+                </div>
+                <button
+                  onClick={closeAnalysis}
+                  className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+                >
+                  <FaTimes className="text-2xl" />
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6">
+              {/* Summary Stats */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 text-center">
+                  <div className="text-3xl font-bold text-blue-600 mb-1">
+                    {detailedAnalysis.percentage}%
+                  </div>
+                  <div className="text-sm text-gray-600">Final Score</div>
+                </div>
+                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 text-center">
+                  <div className="text-3xl font-bold text-green-600 mb-1">
+                    {detailedAnalysis.correctAnswers}
+                  </div>
+                  <div className="text-sm text-gray-600">Correct Answers</div>
+                </div>
+                <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-4 text-center">
+                  <div className="text-3xl font-bold text-red-600 mb-1">
+                    {detailedAnalysis.wrongAnswers}
+                  </div>
+                  <div className="text-sm text-gray-600">Wrong Answers</div>
+                </div>
+              </div>
+
+              {/* Questions Review */}
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <FaClipboardList className="text-blue-600" />
+                  Question by Question Review
+                </h3>
+                <div className="space-y-4">
+                  {detailedAnalysis.answers && detailedAnalysis.answers.map((answer, index) => {
+                    const isCorrect = answer.selectedAnswer === answer.correctAnswer;
+                    return (
+                      <div
+                        key={index}
+                        className={`border-2 rounded-xl p-4 ${
+                          isCorrect
+                            ? "border-green-200 bg-green-50"
+                            : "border-red-200 bg-red-50"
+                        }`}
+                      >
+                        <div className="flex items-start gap-3 mb-3">
+                          <div
+                            className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                              isCorrect
+                                ? "bg-green-500 text-white"
+                                : "bg-red-500 text-white"
+                            }`}
+                          >
+                            {isCorrect ? (
+                              <FaCheckCircle className="text-sm" />
+                            ) : (
+                              <FaTimesCircle className="text-sm" />
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-semibold text-gray-900 mb-2">
+                              Question {index + 1}: {answer.question}
+                            </p>
+                            <div className="space-y-2">
+                              {answer.options && answer.options.map((option, optIndex) => {
+                                const isSelected = optIndex === answer.selectedAnswer;
+                                const isCorrectOption = optIndex === answer.correctAnswer;
+                                return (
+                                  <div
+                                    key={optIndex}
+                                    className={`px-3 py-2 rounded-lg text-sm ${
+                                      isCorrectOption
+                                        ? "bg-green-200 text-green-900 font-semibold"
+                                        : isSelected
+                                        ? "bg-red-200 text-red-900 font-semibold"
+                                        : "bg-white text-gray-700"
+                                    }`}
+                                  >
+                                    {String.fromCharCode(65 + optIndex)}. {option}
+                                    {isCorrectOption && " ✓ (Correct)"}
+                                    {isSelected && !isCorrectOption && " ✗ (Your answer)"}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Close Button */}
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <button
+                  onClick={closeAnalysis}
+                  className="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-lg transition-all"
+                >
+                  Close Analysis
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

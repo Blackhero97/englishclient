@@ -81,7 +81,7 @@ function AITestGenerator({ onQuestionsGenerated }) {
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
             placeholder="e.g., Present Perfect Tense, Vocabulary, Reading Comprehension"
-            className="w-full px-4 py-3 rounded-xl border-2 border-purple-200 focus:border-purple-500 focus:outline-none transition-colors"
+            className="w-full px-4 py-3 bg-white text-gray-900 rounded-xl border-2 border-purple-200 focus:border-purple-500 focus:outline-none transition-colors"
             disabled={isGenerating}
           />
         </div>
@@ -94,7 +94,7 @@ function AITestGenerator({ onQuestionsGenerated }) {
           <select
             value={difficulty}
             onChange={(e) => setDifficulty(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl border-2 border-purple-200 focus:border-purple-500 focus:outline-none transition-colors"
+            className="w-full px-4 py-3 bg-white text-gray-900 rounded-xl border-2 border-purple-200 focus:border-purple-500 focus:outline-none transition-colors"
             disabled={isGenerating}
           >
             <option value="beginner">Beginner (A1-A2)</option>
@@ -118,7 +118,7 @@ function AITestGenerator({ onQuestionsGenerated }) {
             }
             min="1"
             max="25"
-            className="w-full px-4 py-3 rounded-xl border-2 border-purple-200 focus:border-purple-500 focus:outline-none transition-colors"
+            className="w-full px-4 py-3 bg-white text-gray-900 rounded-xl border-2 border-purple-200 focus:border-purple-500 focus:outline-none transition-colors"
             disabled={isGenerating}
           />
         </div>

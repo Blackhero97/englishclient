@@ -440,6 +440,15 @@ function App() {
 
     try {
       console.log("💾 Saving result to database...");
+      
+      // Build detailed answers array with question info
+      const detailedAnswers = questions.map((question, index) => ({
+        question: question.question,
+        options: question.options,
+        correctAnswer: question.answer,
+        selectedAnswer: answers[index]
+      }));
+      
       const resultData = {
         firstName: name,
         lastName: surname,
@@ -450,7 +459,7 @@ function App() {
         totalQuestions: questions.length,
         correctAnswers: correct,
         wrongAnswers: questions.length - correct,
-        answers: answers,
+        answers: detailedAnswers,
       };
 
       console.log("📤 Sending data:", resultData);

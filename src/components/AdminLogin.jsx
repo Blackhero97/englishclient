@@ -62,7 +62,7 @@ function AdminLogin({ onLogin, onBack }) {
                   className={`w-full pl-12 pr-4 py-3 rounded-lg focus:outline-none transition-all border-2 ${
                     error
                       ? "border-red-400 bg-red-50 text-red-900 placeholder-red-400 focus:ring-2 focus:ring-red-200"
-                      : "border-2 border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 focus:bg-white hover:border-gray-400"
+                      : "border-2 border-gray-300 bg-white text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 hover:border-gray-400"
                   }`}
                   autoFocus
                 />
