@@ -67,6 +67,14 @@ function ResultsView({ onBack }) {
   };
 
   const handleViewAnalysis = (result) => {
+    console.log('🔍 Opening detailed analysis for result:', result);
+    console.log('📊 Result answers:', result?.answers);
+    console.log('📝 Answers type:', typeof result?.answers);
+    console.log('📏 Answers length:', result?.answers?.length);
+    if (result?.answers && result.answers.length > 0) {
+      console.log('🎯 First answer type:', typeof result.answers[0]);
+      console.log('🎯 First answer:', result.answers[0]);
+    }
     setDetailedAnalysis(result);
   };
 
@@ -360,7 +368,7 @@ function ResultsView({ onBack }) {
                   <FaClipboardList className="text-blue-600" />
                   Question by Question Review
                 </h3>
-                {!detailedAnalysis?.answers || detailedAnalysis.answers.length === 0 || typeof detailedAnalysis.answers[0] === 'number' ? (
+                {!detailedAnalysis?.answers || detailedAnalysis.answers.length === 0 || typeof detailedAnalysis.answers?.[0] === 'number' ? (
                   <div className="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-6 text-center">
                     <div className="text-5xl mb-3">⚠️</div>
                     <h4 className="text-lg font-bold text-gray-900 mb-2">
