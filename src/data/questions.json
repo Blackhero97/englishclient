@@ -1,0 +1,172 @@
+{
+  "testSets": [
+    {
+      "id": "clockwise-upper-intermediate",
+      "name": "Clockwise Upper-Intermediate (Units 10–17)",
+      "description": "Grammar & Vocabulary Test",
+      "duration": 45,
+      "questions": [
+        {
+          "id": 1,
+          "question": "If he ____ earlier, he wouldn't have missed the train.",
+          "options": ["leaves", "left", "had left", "was leaving"],
+          "answer": 2
+        },
+        {
+          "id": 2,
+          "question": "I wish I ____ more time to travel around the world.",
+          "options": ["have", "had", "will have", "have had"],
+          "answer": 1
+        },
+        {
+          "id": 3,
+          "question": "She's been working here ____ five years.",
+          "options": ["for", "since", "during", "by"],
+          "answer": 0
+        },
+        {
+          "id": 4,
+          "question": "The report must ____ by tomorrow morning.",
+          "options": [
+            "complete",
+            "be completed",
+            "have completed",
+            "completed"
+          ],
+          "answer": 1
+        },
+        {
+          "id": 5,
+          "question": "If only he ____ to me earlier, we could have solved it.",
+          "options": ["talks", "talked", "had talked", "has talked"],
+          "answer": 2
+        },
+        {
+          "id": 6,
+          "question": "They ____ to finish the project by next week.",
+          "options": [
+            "are expecting",
+            "expect",
+            "are expected",
+            "have expected"
+          ],
+          "answer": 2
+        },
+        {
+          "id": 7,
+          "question": "It's high time we ____ something about this problem.",
+          "options": ["do", "did", "have done", "will do"],
+          "answer": 1
+        },
+        {
+          "id": 8,
+          "question": "We couldn't go out because it ____ heavily.",
+          "options": ["rains", "rained", "was raining", "has rained"],
+          "answer": 2
+        },
+        {
+          "id": 9,
+          "question": "I'm not used to ____ up so early in the morning.",
+          "options": ["get", "getting", "got", "gets"],
+          "answer": 1
+        },
+        {
+          "id": 10,
+          "question": "By the time we arrived, everyone ____ already left.",
+          "options": ["has", "have", "had", "having"],
+          "answer": 2
+        },
+        {
+          "id": 11,
+          "question": "The film was so boring that I nearly fell ____.",
+          "options": ["down", "off", "away", "asleep"],
+          "answer": 3
+        },
+        {
+          "id": 12,
+          "question": "Could you turn ____ the volume? It's too loud.",
+          "options": ["off", "on", "down", "up"],
+          "answer": 2
+        },
+        {
+          "id": 13,
+          "question": "I'm really looking forward ____ you again.",
+          "options": ["to see", "seeing", "to seeing", "see"],
+          "answer": 2
+        },
+        {
+          "id": 14,
+          "question": "He refused to give ____ smoking even after his illness.",
+          "options": ["off", "away", "up", "out"],
+          "answer": 2
+        },
+        {
+          "id": 15,
+          "question": "We'll have to put ____ the meeting until next week.",
+          "options": ["away", "off", "up", "out"],
+          "answer": 1
+        },
+        {
+          "id": 16,
+          "question": "The manager congratulated the team ____ their success.",
+          "options": ["on", "for", "with", "about"],
+          "answer": 0
+        },
+        {
+          "id": 17,
+          "question": "She can't stand ____ late at night.",
+          "options": ["to work", "work", "working", "worked"],
+          "answer": 2
+        },
+        {
+          "id": 18,
+          "question": "Let's go somewhere quiet, ____?",
+          "options": ["shall we", "will we", "do we", "don't we"],
+          "answer": 0
+        },
+        {
+          "id": 19,
+          "question": "If I ____ you, I wouldn't take that job.",
+          "options": ["was", "were", "am", "been"],
+          "answer": 1
+        },
+        {
+          "id": 20,
+          "question": "The book ____ I was reading was really interesting.",
+          "options": ["that", "who", "where", "what"],
+          "answer": 0
+        },
+        {
+          "id": 21,
+          "question": "He's the man ____ company won the award.",
+          "options": ["who", "which", "whose", "whom"],
+          "answer": 2
+        },
+        {
+          "id": 22,
+          "question": "I've never seen such a beautiful view ____ this.",
+          "options": ["like", "as", "than", "from"],
+          "answer": 0
+        },
+        {
+          "id": 23,
+          "question": "I was surprised ____ her reaction to the news.",
+          "options": ["for", "by", "about", "to"],
+          "answer": 1
+        },
+        {
+          "id": 24,
+          "question": "We ran out ____ milk this morning.",
+          "options": ["from", "in", "of", "at"],
+          "answer": 2
+        },
+        {
+          "id": 25,
+          "question": "The teacher told the students to hand ____ their homework.",
+          "options": ["up", "in", "on", "at"],
+          "answer": 1
+        }
+      ]
+    }
+  ]
+}

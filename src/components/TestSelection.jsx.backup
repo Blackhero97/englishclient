@@ -1,0 +1,738 @@
+import React from "react";
+import {
+  FaCheckCircle,
+  FaClock,
+  FaBolt,
+  FaSpinner,
+  FaGraduationCap,
+  FaUserTie,
+  FaShieldAlt,
+} from "react-icons/fa";
+
+function TestSelection({ testSets, loading, onSelectTest, onAdminClick }) {
+  const [firstName, setFirstName] = React.useState("");
+  const [lastName, setLastName] = React.useState("");
+  const [step, setStep] = React.useState(1); // 1: name entry, 2: test selection
+  const [selectedTest, setSelectedTest] = React.useState(null);
+
+  const handleContinueToTests = () => {
+    if (firstName.trim() && lastName.trim()) {
+      setStep(2);
+    }
+  };
+
+  const handleSelectTest = (test) => {
+    setSelectedTest(test);
+  };
+
+  const handleStartTest = () => {
+    if (selectedTest) {
+      onSelectTest(selectedTest, firstName, lastName);
+    }
+  };
+
+  return (
+    <div className="min-h-screen lg:h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 overflow-y-auto lg:overflow-hidden py-4 md:py-8 lg:py-0 lg:flex lg:items-center">
+      <div className="max-w-6xl mx-auto w-full px-4 md:px-6">
+        {/* Header - Compact */}
+        <div className="text-center mb-3 md:mb-4">
+          <h1 className="text-xl md:text-3xl font-bold mb-1">
+            <span className="text-gray-900">English </span>
+            <span className="text-blue-600">Test</span>
+          </h1>
+        </div>
+
+        {/* Progress Steps - Compact */}
+        <div className="flex items-center justify-center mb-3 md:mb-5">
+          <div className="flex items-center gap-2 md:gap-3">
+            {/* Step 1 */}
+            <div className="flex items-center gap-1.5">
+              <div
+                className={`w-8 h-8 md:w-9 md:h-9 rounded-full flex items-center justify-center font-bold text-sm ${
+                  step === 1
+                    ? "bg-blue-600 text-white"
+                    : "bg-green-500 text-white"
+                }`}
+              >
+                {step === 1 ? "1" : "✓"}
+              </div>
+              <span
+                className={`font-semibold text-xs md:text-sm ${
+                  step === 1 ? "text-blue-600" : "text-green-600"
+                }`}
+              >
+                Info
+              </span>
+            </div>
+
+            {/* Divider */}
+            <div
+              className={`w-8 md:w-12 h-1 rounded ${
+                step === 2 ? "bg-blue-600" : "bg-gray-300"
+              }`}
+            ></div>
+
+            {/* Step 2 */}
+            <div className="flex items-center gap-1.5">
+              <div
+                className={`w-8 h-8 md:w-9 md:h-9 rounded-full flex items-center justify-center font-bold text-sm ${
+                  step === 2
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-300 text-gray-600"
+                }`}
+              >
+                2
+              </div>
+              <span
+                className={`font-semibold text-xs md:text-sm ${
+                  step === 2 ? "text-blue-600" : "text-gray-500"
+                }`}
+              >
+                Test
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Step 1: Name Entry */}
+        {step === 1 && (
+          <div className="w-full max-w-6xl mx-auto px-4 lg:px-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+              {/* Left Column - Info */}
+              <div className="order-2 lg:order-1 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-xl lg:rounded-2xl shadow-2xl p-4 lg:p-8 text-white">
+                <div className="mb-5">
+                  <h2 className="text-xl lg:text-3xl font-bold mb-2">
+                    Test Your English Skills
+                  </h2>
+                  <p className="text-blue-100 text-xs lg:text-base">
+                    Evaluate your English proficiency with our comprehensive assessment
+                  </p>
+                </div>
+
+                <div className="space-y-3 mb-5">
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-9 h-9 bg-white bg-opacity-20 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <FaCheckCircle className="text-base" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-xs lg:text-base mb-0.5">
+                        Comprehensive Assessment
+                      </h3>
+                      <p className="text-blue-100 text-[11px] lg:text-sm">
+                        Test your grammar, vocabulary, and reading comprehension
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-9 h-9 bg-white bg-opacity-20 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <FaClock className="text-base" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-xs lg:text-base mb-0.5">
+                        Timed Evaluation
+                      </h3>
+                      <p className="text-blue-100 text-[11px] lg:text-sm">
+                        Challenge yourself with time-limited questions
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-9 h-9 bg-white bg-opacity-20 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <FaBolt className="text-base" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-xs lg:text-base mb-0.5">
+                        Instant Results
+                      </h3>
+                      <p className="text-blue-100 text-[11px] lg:text-sm">
+                        Get detailed feedback immediately after completion
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-white border-opacity-20">
+                  <p className="text-blue-100 text-xs italic mb-1.5">
+                    "Language is the road map of a culture."
+                  </p>
+                  <p className="text-white font-semibold text-xs">
+                    — Rita Mae Brown
+                  </p>
+                </div>
+              </div>
+
+              {/* Right Column - Form */}
+              <div className="order-1 lg:order-2 bg-white rounded-xl lg:rounded-2xl shadow-xl p-4 lg:p-8 border border-gray-100">
+                <div className="text-center mb-5">
+                  <div className="w-14 h-14 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center mx-auto mb-2.5">
+                    <FaGraduationCap className="text-2xl text-blue-600" />
+                  </div>
+                  <h2 className="text-xl lg:text-3xl font-bold text-gray-900 mb-1.5">
+                    Get Started
+                  </h2>
+                  <p className="text-gray-500 text-xs lg:text-base">
+                    Enter your information to begin
+                  </p>
+                </div>
+
+                <div className="space-y-3.5 mb-5">
+                  <div>
+                    <label className="block text-gray-700 font-semibold mb-1.5 text-xs lg:text-base">
+                      First Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Enter your first name"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      className="w-full px-3.5 py-2.5 bg-gray-50 text-gray-900 rounded-lg border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white placeholder-gray-400 transition-all text-sm lg:text-base"
+                      autoFocus
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-gray-700 font-semibold mb-1.5 text-xs lg:text-base">
+                      Last Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Enter your last name"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      className="w-full px-3.5 py-2.5 bg-gray-50 text-gray-900 rounded-lg border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white placeholder-gray-400 transition-all text-sm lg:text-base"
+                    />
+                  </div>
+
+                  <button
+                    onClick={handleContinueToTests}
+                    disabled={!firstName.trim() || !lastName.trim()}
+                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white font-bold py-3 rounded-lg transition-all duration-300 hover:shadow-xl text-sm flex items-center justify-center gap-2"
+                  >
+                    Continue to Tests
+                    <span className="text-lg">→</span>
+                  </button>
+
+                  <p className="text-gray-400 text-[11px] lg:text-sm text-center">
+                    Complete honestly and to the best of your ability
+                  </p>
+                </div>
+
+                <div className="pt-3 border-t border-gray-200">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      {/* Teacher */}
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-md">
+                          <FaGraduationCap className="text-white text-xs" />
+                        </div>
+                        <div>
+                          <p className="text-gray-800 font-bold text-[10px]">
+                            Miss Nora
+                          </p>
+                          <p className="text-gray-500 text-[9px]">
+                            Teacher
+                          </p>
+                        </div>
+                      </div>
+                      {/* Developer */}
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-8 h-8 bg-gradient-to-br from-gray-600 to-gray-800 rounded-full flex items-center justify-center shadow-md">
+                          <FaUserTie className="text-white text-xs" />
+                        </div>
+                        <div>
+                          <p className="text-gray-800 font-bold text-[10px]">
+                            N. Hasanboy
+                          </p>
+                          <p className="text-gray-500 text-[9px]">
+                            Developer
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    {/* Admin Button */}
+                    <button
+                      onClick={onAdminClick}
+                      className="px-3 py-1.5 bg-gradient-to-r from-slate-700 to-slate-900 hover:from-blue-600 hover:to-indigo-600 text-white font-bold rounded-lg transition-all duration-300 hover:shadow-lg flex items-center gap-1.5 text-[10px]"
+                    >
+                      <FaShieldAlt className="text-xs" />
+                      <span>Admin</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+                <div className="mb-6">
+                  <h2 className="text-2xl lg:text-3xl font-bold mb-2">
+                    Test Your English Skills
+                  </h2>
+                  <p className="text-blue-100 text-sm lg:text-base">
+                    Evaluate your English proficiency with our comprehensive assessment
+                  </p>
+                </div>
+
+                <div className="space-y-4 mb-6">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-white bg-opacity-20 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <FaCheckCircle className="text-lg" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-sm lg:text-base mb-1">
+                        Comprehensive Assessment
+                      </h3>
+                      <p className="text-blue-100 text-xs lg:text-sm">
+                        Test your grammar, vocabulary, and reading comprehension
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-white bg-opacity-20 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <FaClock className="text-lg" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-sm lg:text-base mb-1">
+                        Timed Evaluation
+                      </h3>
+                      <p className="text-blue-100 text-xs lg:text-sm">
+                        Challenge yourself with time-limited questions
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-white bg-opacity-20 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <FaBolt className="text-lg" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-sm lg:text-base mb-1">
+                        Instant Results
+                      </h3>
+                      <p className="text-blue-100 text-xs lg:text-sm">
+                        Get detailed feedback immediately after completion
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-white border-opacity-20">
+                  <p className="text-blue-100 text-sm italic mb-2">
+                    "Language is the road map of a culture."
+                  </p>
+                  <p className="text-white font-semibold text-sm">
+                    — Rita Mae Brown
+                  </p>
+                </div>
+              </div>
+
+              {/* Right Column - Form */}
+              <div className="order-1 lg:order-2 bg-white rounded-xl lg:rounded-2xl shadow-xl p-4 lg:p-8 border border-gray-100 mx-4 lg:mx-0">
+                <div className="text-center mb-6">
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                    <FaGraduationCap className="text-3xl text-blue-600" />
+                  </div>
+                  <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
+                    Get Started
+                  </h2>
+                  <p className="text-gray-500 text-sm lg:text-base">
+                    Enter your information to begin
+                  </p>
+                </div>
+
+                <div className="space-y-4 mb-6">
+                  <div>
+                    <label className="block text-gray-700 font-semibold mb-2 text-sm lg:text-base">
+                      First Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Enter your first name"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      className="w-full px-4 py-3 bg-gray-50 text-gray-900 rounded-xl border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white placeholder-gray-400 transition-all text-sm lg:text-base"
+                      autoFocus
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-gray-700 font-semibold mb-2 text-sm lg:text-base">
+                      Last Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Enter your last name"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      className="w-full px-4 py-3 bg-gray-50 text-gray-900 rounded-xl border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white placeholder-gray-400 transition-all text-sm lg:text-base"
+                    />
+                  </div>
+
+                  <button
+                    onClick={handleContinueToTests}
+                    disabled={!firstName.trim() || !lastName.trim()}
+                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl transition-all duration-300 hover:shadow-xl text-base flex items-center justify-center gap-2"
+                  >
+                    Continue to Tests
+                    <span className="text-xl">→</span>
+                  </button>
+
+                  <p className="text-gray-400 text-xs lg:text-sm text-center">
+                    Complete honestly and to the best of your ability
+                  </p>
+                </div>
+
+                <div className="pt-4 border-t border-gray-200">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      {/* Teacher */}
+                      <div className="flex items-center gap-2">
+                        <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-md">
+                          <FaGraduationCap className="text-white text-sm" />
+                        </div>
+                        <div>
+                          <p className="text-gray-800 font-bold text-xs">
+                            Miss Nora
+                          </p>
+                          <p className="text-gray-500 text-[10px]">
+                            Teacher
+                          </p>
+                        </div>
+                      </div>
+                      {/* Developer */}
+                      <div className="flex items-center gap-2">
+                        <div className="w-9 h-9 bg-gradient-to-br from-gray-600 to-gray-800 rounded-full flex items-center justify-center shadow-md">
+                          <FaUserTie className="text-white text-sm" />
+                        </div>
+                        <div>
+                          <p className="text-gray-800 font-bold text-xs">
+                            N. Hasanboy
+                          </p>
+                          <p className="text-gray-500 text-[10px]">
+                            Developer
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    {/* Admin Button */}
+                    <button
+                      onClick={onAdminClick}
+                      className="px-4 py-2 bg-gradient-to-r from-slate-700 to-slate-900 hover:from-blue-600 hover:to-indigo-600 text-white font-bold rounded-xl transition-all duration-300 hover:shadow-lg flex items-center gap-2 text-xs"
+                    >
+                      <FaShieldAlt className="text-sm" />
+                      <span>Admin</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Step 2: Test Selection */}
+        {step === 2 && (
+          <div className="h-[calc(100vh-120px)] flex flex-col">
+            <div className="text-center mb-3 flex-shrink-0">
+              <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-1">
+                Hi, {firstName} {lastName}!
+              </h2>
+              <p className="text-xs text-gray-600">
+                Choose a test below
+              </p>
+            </div>
+
+            {loading ? (
+              <div className="text-center py-12">
+                <FaSpinner className="animate-spin text-blue-600 text-4xl mx-auto mb-4" />
+                <p className="text-gray-600">Loading tests...</p>
+              </div>
+            ) : testSets.length === 0 ? (
+              <div className="text-center py-12 bg-white rounded-xl shadow-lg">
+                <p className="text-gray-600 mb-4">No tests available yet.</p>
+                <p className="text-sm text-gray-500">
+                  Please contact your administrator.
+                </p>
+              </div>
+            ) : (
+              <>
+                {/* Scrollable Test List */}
+                <div className="flex-1 overflow-y-auto pr-2 mb-16 md:mb-0 scroll-smooth">
+                  <div className="grid gap-3 pb-4">
+                    {testSets.map((test) => (
+                      <div
+                        key={test.id}
+                        onClick={() => handleSelectTest(test)}
+                        className={`bg-white rounded-lg shadow-lg p-4 border-2 cursor-pointer transition-all hover:shadow-xl active:scale-[0.99] ${
+                          selectedTest?.id === test.id
+                            ? "border-blue-500 bg-blue-50 ring-2 ring-blue-200"
+                            : "border-gray-200 hover:border-blue-300"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex-1 min-w-0 pr-3">
+                            <h3 className="text-base md:text-lg font-bold text-gray-900 mb-1 leading-tight">
+                              {test.name}
+                            </h3>
+                            <p className="text-gray-600 text-xs line-clamp-1">
+                              {test.description ||
+                                "Complete English proficiency assessment"}
+                            </p>
+                          </div>
+                          <div
+                            className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
+                              selectedTest?.id === test.id
+                                ? "border-blue-500 bg-blue-500"
+                                : "border-gray-300"
+                            }`}
+                          >
+                            {selectedTest?.id === test.id && (
+                              <FaCheckCircle className="text-white text-sm" />
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-2">
+                          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-2 text-center border border-blue-100">
+                            <div className="flex items-center justify-center gap-1 mb-0.5">
+                              <FaCheckCircle className="text-blue-600 text-xs" />
+                              <span className="text-[10px] text-gray-600 font-medium">
+                                Questions
+                              </span>
+                            </div>
+                            <p className="text-base font-bold text-gray-900">
+                              {test.questions.length}
+                            </p>
+                          </div>
+                          <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-2 text-center border border-purple-100">
+                            <div className="flex items-center justify-center gap-1 mb-0.5">
+                              <FaClock className="text-purple-600 text-xs" />
+                              <span className="text-[10px] text-gray-600 font-medium">
+                                Duration
+                              </span>
+                            </div>
+                            <p className="text-base font-bold text-gray-900">
+                              {test.duration} min
+                            </p>
+                          </div>
+                          <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-2 text-center border border-green-100">
+                            <div className="flex items-center justify-center gap-1 mb-0.5">
+                              <FaBolt className="text-green-600 text-xs" />
+                              <span className="text-[10px] text-gray-600 font-medium">
+                                Results
+                              </span>
+                            </div>
+                            <p className="text-[11px] font-bold text-gray-900">
+                              Instant
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Sticky Start Button - Mobile & Desktop */}
+                <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t-2 border-gray-200 p-3 shadow-2xl md:relative md:border-0 md:shadow-none md:bg-transparent md:backdrop-blur-none md:p-0 z-50 flex-shrink-0">
+                  <div className="max-w-6xl mx-auto flex gap-2">
+                    <button
+                      onClick={() => setStep(1)}
+                      className="px-4 py-2.5 bg-white border-2 border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold rounded-lg transition-all text-sm shadow-sm hover:shadow-md"
+                    >
+                      ← Back
+                    </button>
+                    <button
+                      onClick={handleStartTest}
+                      disabled={!selectedTest}
+                      className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white font-bold py-2.5 rounded-lg transition-all duration-300 hover:shadow-xl text-sm shadow-lg"
+                    >
+                      {selectedTest
+                        ? `Start ${selectedTest.name} →`
+                        : "Select a Test"}
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
+        {/* Old Layout - Remove */}
+        <div className="grid lg:grid-cols-2 gap-6" style={{ display: "none" }}>
+          {/* Left Column - Form Card */}
+          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 flex flex-col justify-between">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                Start Your Test
+              </h2>
+              <p className="text-gray-500 mb-8">
+                Enter your details to begin the assessment
+              </p>
+
+              <div className="space-y-5 mb-8">
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-2">
+                    First Name
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter your first name"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    className="w-full px-4 py-3 bg-gray-50 text-gray-900 rounded-xl border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white placeholder-gray-400 transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-2">
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter your last name"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    className="w-full px-4 py-3 bg-gray-50 text-gray-900 rounded-xl border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white placeholder-gray-400 transition-all"
+                  />
+                </div>
+
+                <button
+                  onClick={handleStartTest}
+                  disabled={!firstName.trim() || !lastName.trim()}
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-all duration-300 hover:shadow-xl text-lg"
+                >
+                  Start Test →
+                </button>
+              </div>
+            </div>
+
+            {/* Footer in Form Card */}
+            <div className="border-t border-gray-200 pt-3">
+              <div className="flex flex-col lg:flex-row items-center justify-between gap-2">
+                {/* Teacher and Developer */}
+                <div className="flex items-center gap-3">
+                  {/* Teacher */}
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-md">
+                      <FaGraduationCap className="text-white text-sm" />
+                    </div>
+                    <div>
+                      <p className="text-gray-800 font-bold text-xs leading-tight">
+                        Miss Nora
+                      </p>
+                      <p className="text-gray-500 text-[10px] leading-tight">
+                        Teacher
+                      </p>
+                    </div>
+                  </div>
+                  {/* Developer */}
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-9 h-9 bg-gradient-to-br from-gray-600 to-gray-800 rounded-full flex items-center justify-center shadow-md">
+                      <FaUserTie className="text-white text-sm" />
+                    </div>
+                    <div>
+                      <p className="text-gray-800 font-bold text-xs leading-tight">
+                        N. Hasanboy
+                      </p>
+                      <p className="text-gray-500 text-[10px] leading-tight">
+                        Developer
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                {/* Admin Button */}
+                <button
+                  onClick={onAdminClick}
+                  className="px-5 py-2 bg-gradient-to-r from-slate-700 to-slate-900 hover:from-blue-600 hover:to-indigo-600 text-white font-bold rounded-lg transition-all duration-300 hover:shadow-lg flex items-center gap-1.5"
+                >
+                  <FaShieldAlt className="text-sm" />
+                  <span className="text-xs">Admin</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Info Cards */}
+          <div className="space-y-6">
+            {/* Test Stats Card */}
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-xl p-6 text-white">
+              <h3 className="text-xl font-bold mb-4">Test Overview</h3>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 bg-white bg-opacity-20 rounded-lg p-3">
+                  <div className="w-10 h-10 bg-white bg-opacity-30 rounded-lg flex items-center justify-center">
+                    <FaCheckCircle className="text-xl" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-lg">
+                      {testSets[0]?.questions?.length || 30} Questions
+                    </p>
+                    <p className="text-blue-100 text-xs">
+                      Multiple choice format
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 bg-white bg-opacity-20 rounded-lg p-3">
+                  <div className="w-10 h-10 bg-white bg-opacity-30 rounded-lg flex items-center justify-center">
+                    <FaClock className="text-xl" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-lg">
+                      {testSets[0]?.duration || 45} minutes
+                    </p>
+                    <p className="text-blue-100 text-xs">Timed assessment</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 bg-white bg-opacity-20 rounded-lg p-3">
+                  <div className="w-10 h-10 bg-white bg-opacity-30 rounded-lg flex items-center justify-center">
+                    <FaBolt className="text-xl" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-lg">Instant Results</p>
+                    <p className="text-blue-100 text-xs">
+                      Detailed feedback provided
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Instructions Card */}
+            <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+              <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <span className="text-2xl">📝</span>
+                Instructions & Tips
+              </h3>
+              <ul className="space-y-2 text-gray-700 text-sm">
+                <li className="flex items-start gap-2">
+                  <span className="text-blue-600 mt-0.5">•</span>
+                  <span>Answer all questions before time runs out</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-blue-600 mt-0.5">•</span>
+                  <span>Bookmark difficult questions for later review</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-blue-600 mt-0.5">•</span>
+                  <span>
+                    Use keyboard shortcuts: 1-4 for answers, ← → to navigate
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-blue-600 mt-0.5">•</span>
+                  <span>Review all answers before final submission</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-blue-600 mt-0.5">•</span>
+                  <span>Once submitted, you cannot change answers</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default TestSelection;

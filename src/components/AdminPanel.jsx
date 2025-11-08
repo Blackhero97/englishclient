@@ -1,0 +1,986 @@
+import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
+import {
+  FaBook,
+  FaPlus,
+  FaEdit,
+  FaTrash,
+  FaCheck,
+  FaSignOutAlt,
+  FaClock,
+  FaQuestionCircle,
+  FaSave,
+  FaTimes,
+  FaListOl,
+  FaCheckCircle,
+  FaRobot,
+} from "react-icons/fa";
+import AITestGenerator from "./AITestGenerator";
+import CreateLesson from "./CreateLesson";
+
+function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
+  const [tests, setTests] = useState(testSets);
+
+  // Sync with parent state
+  useEffect(() => {
+    setTests(testSets);
+  }, [testSets]);
+  const [editingTest, setEditingTest] = useState(null);
+  const [showNewTestForm, setShowNewTestForm] = useState(false);
+
+  // New test form
+  const [newTestName, setNewTestName] = useState("");
+  const [newTestDesc, setNewTestDesc] = useState("");
+  const [newTestDuration, setNewTestDuration] = useState(45);
+
+  // Question form
+  const [editingQuestion, setEditingQuestion] = useState(null);
+  const [questionText, setQuestionText] = useState("");
+  const [options, setOptions] = useState(["", "", "", ""]);
+  const [correctAnswer, setCorrectAnswer] = useState(0);
+  const [showAIGenerator, setShowAIGenerator] = useState(false);
+
+  // Mobile state - collapsible sections
+  const [showTestList, setShowTestList] = useState(true);
+  const [showQuestionForm, setShowQuestionForm] = useState(true);
+
+  // Mobile tab state
+  const [adminTab, setAdminTab] = useState("tests"); // tests, questions, ai, lessons
+
+  // Lessons state
+  const [lessons, setLessons] = useState([]);
+  const [showCreateLesson, setShowCreateLesson] = useState(false);
+  const [editingLesson, setEditingLesson] = useState(null);
+
+  // Fetch lessons on mount
+  useEffect(() => {
+    fetchLessons();
+  }, []);
+
+  const fetchLessons = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/lessons`);
+      if (response.ok) {
+        const data = await response.json();
+        setLessons(data.lessons || []);
+      }
+    } catch (error) {
+      console.log("No lessons found");
+    }
+  };
+
+  const handleSaveLesson = (savedLesson) => {
+    if (editingLesson) {
+      setLessons(lessons.map((l) => (l.id === savedLesson.id ? savedLesson : l)));
+    } else {
+      setLessons([...lessons, savedLesson]);
+    }
+    setShowCreateLesson(false);
+    setEditingLesson(null);
+  };
+
+  const handleEditLesson = (lesson) => {
+    setEditingLesson(lesson);
+    setShowCreateLesson(true);
+  };
+
+  const handleDeleteLesson = async (lessonId) => {
+    if (!window.confirm("Are you sure you want to delete this lesson?")) return;
+
+    try {
+      const response = await fetch(`${apiUrl}/lessons/${lessonId}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        setLessons(lessons.filter((l) => l.id !== lessonId));
+        toast.success("Lesson deleted successfully!");
+      } else {
+        toast.error("Failed to delete lesson");
+      }
+    } catch (error) {
+      toast.error("Error deleting lesson");
+    }
+  };
+
+  // Save test helper function
+  const handleSaveTest = async (testToSave) => {
+    try {
+      const response = await fetch(`${apiUrl}/tests/${testToSave.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(testToSave),
+      });
+
+      if (!response.ok) throw new Error("Failed to save test");
+
+      const savedTest = await response.json();
+      const updatedTests = tests.map((t) =>
+        t.id === savedTest.id ? savedTest : t
+      );
+
+      setTests(updatedTests);
+      onSave(updatedTests);
+      setEditingTest(savedTest);
+      toast.success("Test saved successfully!");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to save test");
+    }
+  };
+
+  const handleAIQuestionsGenerated = (aiQuestions) => {
+    // Add unique IDs to AI generated questions
+    const questionsWithIds = aiQuestions.map((q) => ({
+      ...q,
+      id: `q-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    }));
+
+    // If no test is being edited, add questions to the current editing test
+    if (!editingTest || !editingTest.id) {
+      toast.info("Please create a test first, then add AI questions");
+      setShowAIGenerator(false);
+      return;
+    }
+
+    // Update test with new questions
+    const updatedTest = {
+      ...editingTest,
+      questions: [...(editingTest.questions || []), ...questionsWithIds],
+    };
+
+    handleSaveTest(updatedTest);
+    setShowAIGenerator(false);
+  };
+
+  const handleCreateTest = async () => {
+    if (!newTestName.trim()) return;
+
+    const newTest = {
+      id: `test-${Date.now()}`,
+      name: newTestName,
+      description: newTestDesc,
+      duration: newTestDuration,
+      questions: [],
+    };
+
+    try {
+      const response = await fetch(`${apiUrl}/tests`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newTest),
+      });
+
+      if (!response.ok) throw new Error("Failed to create test");
+
+      const savedTest = await response.json();
+      const updatedTests = [...tests, savedTest];
+      setTests(updatedTests);
+      onSave(updatedTests);
+      toast.success("Test created successfully!");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to create test");
+      return;
+    }
+
+    setShowNewTestForm(false);
+    setNewTestName("");
+    setNewTestDesc("");
+    setNewTestDuration(45);
+  };
+
+  const handleDeleteTest = async (testId) => {
+    if (!window.confirm("Are you sure you want to delete this test?")) return;
+
+    try {
+      const response = await fetch(`${apiUrl}/tests/${testId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) throw new Error("Failed to delete test");
+
+      const updatedTests = tests.filter((t) => t.id !== testId);
+      setTests(updatedTests);
+      onSave(updatedTests);
+      if (editingTest?.id === testId) {
+        setEditingTest(null);
+      }
+      toast.success("Test deleted successfully!");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to delete test");
+    }
+  };
+
+  const handleAddQuestion = async () => {
+    if (!questionText.trim() || options.some((opt) => !opt.trim())) {
+      toast.error("Please fill all fields!");
+      return;
+    }
+
+    const newQuestion = {
+      id: Date.now(),
+      question: questionText,
+      options: options,
+      answer: correctAnswer,
+    };
+
+    const updatedTest = {
+      id: editingTest.id,
+      name: editingTest.name,
+      description: editingTest.description,
+      duration: editingTest.duration,
+      questions: [...(editingTest.questions || []), newQuestion],
+    };
+
+    try {
+      const response = await fetch(`${apiUrl}/tests/${editingTest.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedTest),
+      });
+
+      if (!response.ok) throw new Error("Failed to add question");
+
+      const savedTest = await response.json();
+      const updatedTests = tests.map((t) =>
+        t.id === savedTest.id ? savedTest : t
+      );
+      setTests(updatedTests);
+      onSave(updatedTests);
+      setEditingTest(savedTest);
+      toast.success("Question added successfully!");
+
+      // Reset form
+      setQuestionText("");
+      setOptions(["", "", "", ""]);
+      setCorrectAnswer(0);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to add question");
+    }
+  };
+
+  const handleUpdateQuestion = async () => {
+    if (!questionText.trim() || options.some((opt) => !opt.trim())) {
+      toast.error("Please fill all fields!");
+      return;
+    }
+
+    const updatedTest = {
+      id: editingTest.id,
+      name: editingTest.name,
+      description: editingTest.description,
+      duration: editingTest.duration,
+      questions: editingTest.questions.map((q) =>
+        q.id === editingQuestion.id
+          ? { ...q, question: questionText, options, answer: correctAnswer }
+          : q
+      ),
+    };
+
+    try {
+      const response = await fetch(`${apiUrl}/tests/${editingTest.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedTest),
+      });
+
+      if (!response.ok) throw new Error("Failed to update question");
+
+      const savedTest = await response.json();
+      const updatedTests = tests.map((t) =>
+        t.id === savedTest.id ? savedTest : t
+      );
+
+      setTests(updatedTests);
+      onSave(updatedTests);
+      setEditingTest(savedTest);
+      setEditingQuestion(null);
+      setQuestionText("");
+      setOptions(["", "", "", ""]);
+      setCorrectAnswer(0);
+      toast.success("Question updated successfully!");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to update question");
+    }
+  };
+
+  const handleDeleteQuestion = async (questionId) => {
+    if (!window.confirm("Are you sure you want to delete this question?"))
+      return;
+
+    const updatedTest = {
+      id: editingTest.id,
+      name: editingTest.name,
+      description: editingTest.description,
+      duration: editingTest.duration,
+      questions: editingTest.questions.filter((q) => q.id !== questionId),
+    };
+
+    try {
+      const response = await fetch(`${apiUrl}/tests/${editingTest.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedTest),
+      });
+
+      if (!response.ok) throw new Error("Failed to delete question");
+
+      const savedTest = await response.json();
+      const updatedTests = tests.map((t) =>
+        t.id === savedTest.id ? savedTest : t
+      );
+      setTests(updatedTests);
+      onSave(updatedTests);
+      setEditingTest(savedTest);
+      toast.success("Question deleted successfully!");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to delete question");
+    }
+  };
+
+  const handleEditQuestion = (question) => {
+    setEditingQuestion(question);
+    setQuestionText(question.question);
+    setOptions([...question.options]);
+    setCorrectAnswer(question.answer);
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      <div className="max-w-7xl mx-auto p-3 md:p-6">
+        {/* Header - Professional & Compact */}
+        <div className="bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-600 rounded-xl md:rounded-2xl shadow-2xl p-4 md:p-6 mb-4 md:mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg">
+                <FaBook className="text-white text-lg md:text-xl" />
+              </div>
+              <div>
+                <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-white">
+                  Admin Panel
+                </h1>
+                <p className="text-blue-100 text-xs md:text-sm font-medium">
+                  Manage tests & questions
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-2 w-full sm:w-auto">
+              <button
+                onClick={() => (window.location.href = "/admin-results")}
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white/95 hover:bg-white text-indigo-600 px-4 md:px-5 py-2 md:py-2.5 rounded-lg md:rounded-xl font-bold transition-all hover:shadow-xl text-sm"
+              >
+                <FaCheckCircle className="text-base" />
+                <span>Results</span>
+              </button>
+              <button
+                onClick={onLogout}
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white/95 hover:bg-white text-indigo-600 px-4 md:px-5 py-2 md:py-2.5 rounded-lg md:rounded-xl font-bold transition-all hover:shadow-xl text-sm"
+              >
+                <FaSignOutAlt className="text-base" />
+                <span>Logout</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile Tabs */}
+          <div className="lg:hidden mt-4 flex gap-2 bg-white/10 backdrop-blur-sm rounded-xl p-1.5">
+            <button
+              onClick={() => setAdminTab("tests")}
+              className={`flex-1 py-2.5 rounded-lg font-semibold text-xs transition-all ${
+                adminTab === "tests"
+                  ? "bg-white text-indigo-600 shadow-md"
+                  : "text-white/80 hover:bg-white/10"
+              }`}
+            >
+              📚 Tests
+            </button>
+            <button
+              onClick={() => setAdminTab("lessons")}
+              className={`flex-1 py-2.5 rounded-lg font-semibold text-xs transition-all ${
+                adminTab === "lessons"
+                  ? "bg-white text-indigo-600 shadow-md"
+                  : "text-white/80 hover:bg-white/10"
+              }`}
+            >
+              📖 Lessons
+            </button>
+            <button
+              onClick={() => setAdminTab("questions")}
+              className={`flex-1 py-2.5 rounded-lg font-semibold text-xs transition-all ${
+                adminTab === "questions"
+                  ? "bg-white text-indigo-600 shadow-md"
+                  : "text-white/80 hover:bg-white/10"
+              }`}
+              disabled={!editingTest}
+            >
+              ❓ Questions
+            </button>
+            <button
+              onClick={() => setAdminTab("ai")}
+              className={`flex-1 py-2.5 rounded-lg font-semibold text-xs transition-all ${
+                adminTab === "ai"
+                  ? "bg-white text-indigo-600 shadow-md"
+                  : "text-white/80 hover:bg-white/10"
+              }`}
+              disabled={!editingTest}
+            >
+              🤖 AI
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-5">
+          {/* Left: Test List */}
+          <div
+            className={`lg:col-span-4 bg-white rounded-xl shadow-lg border border-gray-100 ${
+              adminTab !== "tests" ? "hidden lg:block" : ""
+            }`}
+          >
+            {/* Header */}
+            <div
+              className="flex justify-between items-center p-4 border-b border-gray-200 cursor-pointer lg:cursor-default"
+              onClick={() => setShowTestList(!showTestList)}
+            >
+              <h2 className="text-base md:text-lg font-bold text-gray-900 flex items-center gap-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-lg flex items-center justify-center shadow-md">
+                  <FaBook className="text-white text-sm" />
+                </div>
+                <span>Tests ({tests.length})</span>
+              </h2>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowCreateLesson(true);
+                  }}
+                  className="hidden lg:flex items-center gap-1.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-3 py-2 rounded-lg font-semibold transition-all text-xs shadow-md hover:shadow-lg"
+                  title="Manage Lessons"
+                >
+                  📖
+                  <span className="hidden xl:inline">Lessons</span>
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowNewTestForm(true);
+                    setShowTestList(true);
+                  }}
+                  className="flex items-center gap-1.5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white px-3 py-2 rounded-lg font-semibold transition-all text-xs shadow-md hover:shadow-lg"
+                >
+                  <FaPlus className="text-xs" />
+                  <span className="hidden sm:inline">New</span>
+                </button>
+                <div className="lg:hidden">{showTestList ? "▼" : "▶"}</div>
+              </div>
+            </div>
+
+            {/* Collapsible Content */}
+            <div
+              className={`${
+                showTestList ? "block" : "hidden lg:block"
+              } p-3 md:p-4`}
+            >
+              {showNewTestForm && (
+                <div className="mb-4 p-4 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-lg border border-indigo-200 shadow-sm">
+                  <h3 className="text-gray-900 font-bold text-sm mb-3 flex items-center gap-2">
+                    <div className="w-6 h-6 bg-indigo-600 rounded-lg flex items-center justify-center">
+                      <FaPlus className="text-white text-xs" />
+                    </div>
+                    Create New Test
+                  </h3>
+                  <div className="space-y-2.5">
+                    <div>
+                      <label className="block text-gray-700 font-semibold mb-1.5 text-xs">
+                        Test Name *
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g., Intermediate Level"
+                        value={newTestName}
+                        onChange={(e) => setNewTestName(e.target.value)}
+                        className="w-full px-3 py-2 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all text-gray-900 text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-gray-700 font-semibold mb-1.5 text-xs">
+                        Description
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Brief description"
+                        value={newTestDesc}
+                        onChange={(e) => setNewTestDesc(e.target.value)}
+                        className="w-full px-3 py-2 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all text-gray-900 text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-gray-700 font-semibold mb-1.5 text-xs">
+                        Duration (minutes) *
+                      </label>
+                      <input
+                        type="number"
+                        placeholder="45"
+                        value={newTestDuration}
+                        onChange={(e) =>
+                          setNewTestDuration(parseInt(e.target.value))
+                        }
+                        className="w-full px-3 py-2 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all text-gray-900 text-sm"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex gap-2 mt-3">
+                    <button
+                      onClick={handleCreateTest}
+                      className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white py-2.5 rounded-lg font-semibold transition-all hover:shadow-lg text-sm"
+                    >
+                      <FaCheck className="text-xs" />
+                      Create
+                    </button>
+                    <button
+                      onClick={() => setShowNewTestForm(false)}
+                      className="px-4 flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-700 py-2.5 rounded-lg font-semibold transition-all text-sm border-2 border-gray-300"
+                    >
+                      <FaTimes className="text-xs" />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-2 max-h-[calc(100vh-400px)] overflow-y-auto pr-1">
+                {tests.length === 0 && (
+                  <div className="text-center py-8 text-gray-400">
+                    <FaBook className="text-3xl mx-auto mb-2 opacity-50" />
+                    <p className="text-xs">No tests yet</p>
+                    <p className="text-[10px] mt-1">Click "New" to create</p>
+                  </div>
+                )}
+                {tests.map((test) => (
+                  <div
+                    key={test.id}
+                    className={`group p-3 rounded-lg border cursor-pointer transition-all hover:shadow-md ${
+                      editingTest?.id === test.id
+                        ? "bg-gradient-to-r from-indigo-50 to-blue-50 border-indigo-400 shadow-sm"
+                        : "bg-white border-gray-200 hover:border-indigo-300"
+                    }`}
+                    onClick={() => setEditingTest(test)}
+                  >
+                    <div className="flex justify-between items-start mb-1.5">
+                      <h3 className="font-bold text-gray-900 text-sm flex items-center gap-2 flex-1">
+                        <div
+                          className={`w-2 h-2 rounded-full ${
+                            editingTest?.id === test.id
+                              ? "bg-indigo-600"
+                              : "bg-gray-300"
+                          }`}
+                        ></div>
+                        <span className="line-clamp-1">{test.name}</span>
+                      </h3>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteTest(test.id);
+                        }}
+                        className="p-1 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition-all opacity-0 group-hover:opacity-100"
+                        title="Delete"
+                      >
+                        <FaTrash className="text-xs" />
+                      </button>
+                    </div>
+                    {test.description && (
+                      <p className="text-xs text-gray-500 mb-1.5 line-clamp-1">
+                        {test.description}
+                      </p>
+                    )}
+                    <div className="flex items-center gap-1.5 text-xs">
+                      <span className="flex items-center gap-1 bg-purple-50 text-purple-700 px-2 py-0.5 rounded border border-purple-200">
+                        <FaQuestionCircle className="text-[10px]" />
+                        <span className="font-semibold">
+                          {test.questions.length}
+                        </span>
+                      </span>
+                      <span className="flex items-center gap-1 bg-blue-50 text-blue-700 px-2 py-0.5 rounded border border-blue-200">
+                        <FaClock className="text-[10px]" />
+                        <span className="font-semibold">{test.duration}m</span>
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Questions and Form Combined */}
+          {editingTest && (
+            <div
+              className={`lg:col-span-8 bg-white rounded-xl shadow-lg border border-gray-100 ${
+                adminTab === "tests" ? "hidden lg:block" : ""
+              }`}
+            >
+              <div className="flex justify-between items-start p-4 md:p-5 border-b border-gray-200">
+                <div className="flex-1 min-w-0">
+                  <h2 className="text-base md:text-xl font-bold text-gray-900 mb-1 flex items-center gap-2">
+                    <div className="w-7 h-7 md:w-9 md:h-9 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center shadow-md flex-shrink-0">
+                      <FaQuestionCircle className="text-white text-xs md:text-sm" />
+                    </div>
+                    <span className="truncate text-sm md:text-base">
+                      {editingTest.name}
+                    </span>
+                  </h2>
+                  <p className="text-xs text-gray-500 ml-9 md:ml-11">
+                    {editingTest.questions.length} questions •{" "}
+                    {editingTest.duration} min
+                  </p>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-blue-600">
+                    {editingTest.questions.length}
+                  </div>
+                  <div className="text-xs text-gray-500">Total Questions</div>
+                </div>
+              </div>
+
+              {/* Lessons Tab - for managing English lessons */}
+              {adminTab === "lessons" && (
+                <div className="lg:hidden">
+                  {showCreateLesson ? (
+                    <CreateLesson
+                      lesson={editingLesson}
+                      onSave={handleSaveLesson}
+                      onCancel={() => {
+                        setShowCreateLesson(false);
+                        setEditingLesson(null);
+                      }}
+                    />
+                  ) : (
+                    <div className="bg-white rounded-xl shadow-lg p-4 border border-gray-100">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-bold text-gray-900">
+                          Manage Lessons
+                        </h3>
+                        <button
+                          onClick={() => setShowCreateLesson(true)}
+                          className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-lg flex items-center gap-2"
+                        >
+                          <FaPlus />
+                          New Lesson
+                        </button>
+                      </div>
+                      <div className="space-y-3">
+                        {lessons.length === 0 ? (
+                          <p className="text-gray-500 text-center py-8">
+                            No lessons yet. Create your first lesson!
+                          </p>
+                        ) : (
+                          lessons.map((lesson) => (
+                            <div
+                              key={lesson.id}
+                              className="bg-gray-50 rounded-lg p-4 border border-gray-200"
+                            >
+                              <div className="flex items-start justify-between mb-2">
+                                <div className="flex-1">
+                                  <h4 className="font-bold text-gray-900">
+                                    {lesson.title}
+                                  </h4>
+                                  <p className="text-sm text-gray-600 line-clamp-1">
+                                    {lesson.description}
+                                  </p>
+                                  <div className="flex items-center gap-3 mt-2 text-xs">
+                                    <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded">
+                                      {lesson.level}
+                                    </span>
+                                    <span className="text-gray-600">
+                                      {lesson.category}
+                                    </span>
+                                    <span className="text-gray-500">
+                                      {lesson.duration}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => handleEditLesson(lesson)}
+                                    className="p-2 bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-lg"
+                                  >
+                                    <FaEdit />
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteLesson(lesson.id)}
+                                    className="p-2 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg"
+                                  >
+                                    <FaTrash />
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* AI Generator Section */}
+              {showAIGenerator && (
+                <div className={`mb-6 ${adminTab !== "ai" ? "hidden lg:block" : ""}`}>
+                  <AITestGenerator
+                    onQuestionsGenerated={handleAIQuestionsGenerated}
+                  />
+                </div>
+              )}
+
+              <div className="grid lg:grid-cols-2 gap-5">
+                {/* Questions List */}
+                <div>
+                  <div className="flex justify-between items-center mb-3">
+                    <button
+                      onClick={() => setShowAIGenerator(!showAIGenerator)}
+                      className="px-3 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-semibold text-sm transition-all hover:shadow-lg flex items-center gap-2"
+                    >
+                      <FaRobot />
+                      {showAIGenerator
+                        ? "Hide AI Generator"
+                        : "Generate with AI"}
+                    </button>
+                    <h3 className="text-base font-bold text-gray-800 flex items-center gap-2">
+                      <FaListOl className="text-purple-600 text-sm" />
+                      Questions List
+                    </h3>
+                    <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full font-semibold">
+                      {editingTest.questions.length} total
+                    </span>
+                  </div>
+                  <div className="space-y-2 max-h-[calc(100vh-350px)] overflow-y-auto pr-2">
+                    {editingTest.questions.length === 0 && (
+                      <div className="text-center py-8 text-gray-400 bg-gray-50 rounded-lg border border-dashed border-gray-300">
+                        <FaQuestionCircle className="text-3xl mx-auto mb-2 opacity-50" />
+                        <p className="text-xs">No questions added yet</p>
+                      </div>
+                    )}
+                    {editingTest.questions.map((q, index) => (
+                      <div
+                        key={q.id}
+                        className="group p-3 bg-gradient-to-r from-gray-50 to-white rounded-lg border border-gray-200 hover:border-purple-300 hover:shadow-sm transition-all"
+                      >
+                        <div className="flex justify-between items-start mb-2">
+                          <span className="flex items-center gap-1.5 font-bold text-purple-600 text-xs">
+                            <span className="w-5 h-5 bg-purple-100 rounded flex items-center justify-center">
+                              {index + 1}
+                            </span>
+                          </span>
+                          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
+                              onClick={() => handleEditQuestion(q)}
+                              className="p-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 transition-all"
+                              title="Edit Question"
+                            >
+                              <FaEdit className="text-xs" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteQuestion(q.id)}
+                              className="p-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition-all"
+                              title="Delete Question"
+                            >
+                              <FaTrash className="text-xs" />
+                            </button>
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-900 font-medium mb-2 line-clamp-2">
+                          {q.question}
+                        </p>
+                        <div className="space-y-1">
+                          {q.options.map((opt, i) => (
+                            <div
+                              key={i}
+                              className={`text-xs px-2 py-1 rounded flex items-center gap-1.5 ${
+                                i === q.answer
+                                  ? "bg-green-50 text-green-700 font-semibold border border-green-300"
+                                  : "bg-white text-gray-500 border border-gray-200"
+                              }`}
+                            >
+                              {i === q.answer && (
+                                <FaCheckCircle className="text-green-600 flex-shrink-0" />
+                              )}
+                              <span className="font-bold mr-1">
+                                {String.fromCharCode(65 + i)})
+                              </span>
+                              <span className="flex-1">{opt}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Add/Edit Question Form - Collapsible on Mobile */}
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+                  <div
+                    className="flex justify-between items-center p-4 cursor-pointer md:cursor-default"
+                    onClick={() => setShowQuestionForm(!showQuestionForm)}
+                  >
+                    <h3 className="text-sm md:text-base font-bold text-gray-800 flex items-center gap-2">
+                      {editingQuestion ? (
+                        <>
+                          <div className="w-6 h-6 md:w-7 md:h-7 bg-blue-600 rounded-lg flex items-center justify-center">
+                            <FaEdit className="text-white text-xs" />
+                          </div>
+                          <span className="text-xs md:text-sm">
+                            Edit Question
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <div className="w-6 h-6 md:w-7 md:h-7 bg-green-600 rounded-lg flex items-center justify-center">
+                            <FaPlus className="text-white text-xs" />
+                          </div>
+                          <span className="text-xs md:text-sm">
+                            Add Question
+                          </span>
+                        </>
+                      )}
+                    </h3>
+                    <div className="md:hidden">
+                      {showQuestionForm ? "▼" : "▶"}
+                    </div>
+                  </div>
+
+                  <div
+                    className={`${
+                      showQuestionForm ? "block" : "hidden md:block"
+                    } p-4 pt-0 md:pt-4`}
+                  >
+                    <div className="space-y-3">
+                      <div>
+                        <label className="flex items-center gap-1.5 text-gray-700 font-semibold mb-2 text-sm md:text-xs">
+                          <FaQuestionCircle className="text-blue-600 text-sm md:text-xs" />
+                          Question Text *
+                        </label>
+                        <textarea
+                          value={questionText}
+                          onChange={(e) => setQuestionText(e.target.value)}
+                          className="w-full px-4 py-3 md:px-3 md:py-2 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 resize-none text-gray-900 text-base md:text-sm transition-all touch-manipulation"
+                          rows="4"
+                          placeholder="Type your question here..."
+                        />
+                      </div>
+
+                      <div>
+                        <label className="flex items-center gap-1.5 text-gray-700 font-semibold mb-3 text-sm md:text-xs">
+                          <FaListOl className="text-purple-600 text-sm md:text-xs" />
+                          Answer Options *
+                        </label>
+                        {options.map((opt, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center gap-3 mb-3"
+                          >
+                            <input
+                              type="radio"
+                              name="correct"
+                              checked={correctAnswer === index}
+                              onChange={() => setCorrectAnswer(index)}
+                              className="w-5 h-5 md:w-4 md:h-4 cursor-pointer accent-green-600 flex-shrink-0 touch-manipulation"
+                              title="Mark as correct answer"
+                            />
+                            <div className="flex-1 relative">
+                              <div className="absolute left-3 top-1/2 transform -translate-y-1/2 w-7 h-7 md:w-6 md:h-6 bg-gradient-to-br from-blue-100 to-indigo-100 rounded flex items-center justify-center shadow-sm z-10">
+                                <span className="font-bold text-blue-700 text-sm md:text-xs">
+                                  {String.fromCharCode(65 + index)}
+                                </span>
+                              </div>
+                              <input
+                                type="text"
+                                value={opt}
+                                onChange={(e) => {
+                                  const newOpts = [...options];
+                                  newOpts[index] = e.target.value;
+                                  setOptions(newOpts);
+                                }}
+                                className={`w-full pl-12 md:pl-10 pr-4 py-3 md:py-2 bg-white border-2 rounded-lg focus:outline-none focus:ring-2 transition-all text-gray-900 text-base md:text-sm touch-manipulation ${
+                                  correctAnswer === index
+                                    ? "border-green-400 focus:border-green-500 focus:ring-green-100 bg-green-50 font-semibold"
+                                    : "border-gray-300 focus:border-blue-500 focus:ring-blue-100"
+                                }`}
+                                placeholder={`Enter option ${String.fromCharCode(
+                                  65 + index
+                                )}`}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                        <div className="bg-green-50 border border-green-200 rounded-lg p-2 mt-2 flex items-center gap-2">
+                          <FaCheckCircle className="text-green-600 text-xs" />
+                          <p className="text-green-700 text-xs font-medium">
+                            Click radio button to mark the correct answer
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-2 mt-4 pt-3 border-t border-blue-200">
+                        {editingQuestion ? (
+                          <>
+                            <button
+                              onClick={handleUpdateQuestion}
+                              className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3 md:py-2.5 rounded-lg font-semibold transition-all hover:shadow-lg hover:scale-105 text-base md:text-sm touch-manipulation"
+                            >
+                              <FaSave className="text-sm md:text-xs" />
+                              Save Changes
+                            </button>
+                            <button
+                              onClick={() => {
+                                setEditingQuestion(null);
+                                setQuestionText("");
+                                setOptions(["", "", "", ""]);
+                                setCorrectAnswer(0);
+                              }}
+                              className="px-4 flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-700 py-3 md:py-2.5 rounded-lg font-semibold transition-all text-base md:text-sm border-2 border-gray-300 hover:border-gray-400 touch-manipulation"
+                            >
+                              <FaTimes className="text-sm md:text-xs" />
+                              Cancel
+                            </button>
+                          </>
+                        ) : (
+                          <button
+                            onClick={handleAddQuestion}
+                            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white py-3 md:py-2.5 rounded-lg font-semibold transition-all hover:shadow-lg hover:scale-105 text-base md:text-sm touch-manipulation"
+                          >
+                            <FaPlus className="text-sm md:text-xs" />
+                            Add Question
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Lessons Modal - Desktop */}
+      {showCreateLesson && (
+        <div className="hidden lg:flex fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <CreateLesson
+              lesson={editingLesson}
+              onSave={handleSaveLesson}
+              onCancel={() => {
+                setShowCreateLesson(false);
+                setEditingLesson(null);
+              }}
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default AdminPanel;

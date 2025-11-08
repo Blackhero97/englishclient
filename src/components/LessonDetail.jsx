@@ -1,0 +1,276 @@
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  FaArrowLeft,
+  FaBook,
+  FaClock,
+  FaGraduationCap,
+  FaRobot,
+  FaPrint,
+  FaBookmark,
+  FaRegBookmark,
+  FaSpinner,
+} from "react-icons/fa";
+import ReactMarkdown from "react-markdown";
+import { toast } from "react-toastify";
+import AIChatbot from "./AIChatbot";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
+// Import default lessons
+const defaultLessons = [
+  {
+    id: "lesson-1",
+    title: "The English Alphabet",
+    category: "Basics",
+    level: "Beginner",
+    description: "Learn all 26 letters of the English alphabet with pronunciation",
+    content: `# The English Alphabet\n\n## Overview\nThe English alphabet has 26 letters: A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z\n\n## Vowels\nThere are 5 vowels: **A, E, I, O, U**\n\n## Consonants\nThe remaining 21 letters are consonants.\n\n## Practice\nTry to write the alphabet in both uppercase and lowercase:\n- Uppercase: A B C D E F G H I J K L M N O P Q R S T U V W X Y Z\n- Lowercase: a b c d e f g h i j k l m n o p q r s t u v w x y z`,
+    duration: "10 min",
+  },
+  // Add other default lessons here if needed
+];
+
+function LessonDetail() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [lesson, setLesson] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [showAIChatbot, setShowAIChatbot] = useState(false);
+
+  useEffect(() => {
+    fetchLesson();
+    checkBookmark();
+  }, [id]);
+
+  const fetchLesson = async () => {
+    try {
+      // First try to get from API
+      const response = await fetch(`${API_URL}/lessons/${id}`);
+      if (response.ok) {
+        const data = await response.json();
+        setLesson(data.lesson);
+      } else {
+        // If not found in API, check default lessons
+        const defaultLesson = defaultLessons.find((l) => l.id === id);
+        if (defaultLesson) {
+          setLesson(defaultLesson);
+        } else {
+          toast.error("Lesson not found");
+          navigate("/lessons");
+        }
+      }
+    } catch (error) {
+      // On error, try default lessons
+      const defaultLesson = defaultLessons.find((l) => l.id === id);
+      if (defaultLesson) {
+        setLesson(defaultLesson);
+      } else {
+        toast.error("Failed to load lesson");
+        navigate("/lessons");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const checkBookmark = () => {
+    const bookmarks = JSON.parse(localStorage.getItem("bookmarkedLessons") || "[]");
+    setIsBookmarked(bookmarks.includes(id));
+  };
+
+  const toggleBookmark = () => {
+    const bookmarks = JSON.parse(localStorage.getItem("bookmarkedLessons") || "[]");
+    if (isBookmarked) {
+      const updated = bookmarks.filter((lessonId) => lessonId !== id);
+      localStorage.setItem("bookmarkedLessons", JSON.stringify(updated));
+      setIsBookmarked(false);
+      toast.info("Removed from bookmarks");
+    } else {
+      bookmarks.push(id);
+      localStorage.setItem("bookmarkedLessons", JSON.stringify(bookmarks));
+      setIsBookmarked(true);
+      toast.success("Added to bookmarks");
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-red-50 flex items-center justify-center">
+        <div className="text-center">
+          <FaSpinner className="animate-spin text-purple-600 text-6xl mx-auto mb-4" />
+          <p className="text-gray-600 text-lg">Loading lesson...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!lesson) {
+    return null;
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-red-50 py-6 px-4">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <button
+              onClick={() => navigate("/lessons")}
+              className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all"
+            >
+              <FaArrowLeft />
+              <span className="font-semibold">Back to Lessons</span>
+            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={toggleBookmark}
+                className="p-3 bg-gray-100 hover:bg-yellow-100 rounded-lg transition-all"
+              >
+                {isBookmarked ? (
+                  <FaBookmark className="text-yellow-500 text-xl" />
+                ) : (
+                  <FaRegBookmark className="text-gray-500 text-xl" />
+                )}
+              </button>
+              <button
+                onClick={() => window.print()}
+                className="p-3 bg-gray-100 hover:bg-blue-100 rounded-lg transition-all"
+              >
+                <FaPrint className="text-gray-600 text-xl" />
+              </button>
+            </div>
+          </div>
+
+          {/* Lesson Info */}
+          <div className="border-t border-gray-200 pt-4">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1">
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                  {lesson.title}
+                </h1>
+                <p className="text-gray-600 mb-4">{lesson.description}</p>
+                <div className="flex flex-wrap items-center gap-4">
+                  <span
+                    className={`px-4 py-2 rounded-lg font-semibold text-sm ${
+                      lesson.level === "Beginner"
+                        ? "bg-green-100 text-green-700"
+                        : lesson.level === "Intermediate"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {lesson.level}
+                  </span>
+                  <span className="flex items-center gap-2 text-purple-600 font-semibold">
+                    <FaGraduationCap />
+                    {lesson.category}
+                  </span>
+                  <span className="flex items-center gap-2 text-gray-600">
+                    <FaClock />
+                    {lesson.duration}
+                  </span>
+                </div>
+              </div>
+              <div className="flex-shrink-0">
+                <div className="w-20 h-20 bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl flex items-center justify-center">
+                  <FaBook className="text-4xl text-purple-600" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Lesson Content */}
+        <div className="bg-white rounded-xl shadow-lg p-8 mb-6">
+          <div className="prose prose-lg max-w-none">
+            <ReactMarkdown
+              components={{
+                h1: ({ children }) => (
+                  <h1 className="text-3xl font-bold text-gray-900 mb-4 mt-6">
+                    {children}
+                  </h1>
+                ),
+                h2: ({ children }) => (
+                  <h2 className="text-2xl font-bold text-gray-800 mb-3 mt-5">
+                    {children}
+                  </h2>
+                ),
+                h3: ({ children }) => (
+                  <h3 className="text-xl font-bold text-gray-700 mb-2 mt-4">
+                    {children}
+                  </h3>
+                ),
+                p: ({ children }) => (
+                  <p className="text-gray-700 mb-4 leading-relaxed">
+                    {children}
+                  </p>
+                ),
+                ul: ({ children }) => (
+                  <ul className="list-disc list-inside mb-4 space-y-2">
+                    {children}
+                  </ul>
+                ),
+                ol: ({ children }) => (
+                  <ol className="list-decimal list-inside mb-4 space-y-2">
+                    {children}
+                  </ol>
+                ),
+                li: ({ children }) => (
+                  <li className="text-gray-700">{children}</li>
+                ),
+                strong: ({ children }) => (
+                  <strong className="font-bold text-purple-600">
+                    {children}
+                  </strong>
+                ),
+                code: ({ children }) => (
+                  <code className="bg-gray-100 px-2 py-1 rounded text-sm font-mono text-purple-600">
+                    {children}
+                  </code>
+                ),
+              }}
+            >
+              {lesson.content}
+            </ReactMarkdown>
+          </div>
+        </div>
+
+        {/* AI Assistant Section */}
+        <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl shadow-lg p-6 text-white">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-14 h-14 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+              <FaRobot className="text-3xl" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-xl font-bold mb-1">Need Help?</h3>
+              <p className="text-purple-100 text-sm">
+                Ask our AI English Teacher about this lesson
+              </p>
+            </div>
+            <button
+              onClick={() => setShowAIChatbot(true)}
+              className="px-6 py-3 bg-white text-purple-600 font-bold rounded-lg hover:bg-purple-50 transition-all"
+            >
+              Ask AI
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* AI Chatbot */}
+      <AIChatbot
+        isOpen={showAIChatbot}
+        onClose={() => setShowAIChatbot(false)}
+        testContext={{
+          lessonTitle: lesson.title,
+          lessonCategory: lesson.category,
+          lessonLevel: lesson.level,
+        }}
+      />
+    </div>
+  );
+}
+
+export default LessonDetail;
