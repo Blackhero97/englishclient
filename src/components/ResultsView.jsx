@@ -360,64 +360,78 @@ function ResultsView({ onBack }) {
                   <FaClipboardList className="text-blue-600" />
                   Question by Question Review
                 </h3>
-                <div className="space-y-4">
-                  {detailedAnalysis.answers && detailedAnalysis.answers.map((answer, index) => {
-                    const isCorrect = answer.selectedAnswer === answer.correctAnswer;
-                    return (
-                      <div
-                        key={index}
-                        className={`border-2 rounded-xl p-4 ${
-                          isCorrect
-                            ? "border-green-200 bg-green-50"
-                            : "border-red-200 bg-red-50"
-                        }`}
-                      >
-                        <div className="flex items-start gap-3 mb-3">
-                          <div
-                            className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                              isCorrect
-                                ? "bg-green-500 text-white"
-                                : "bg-red-500 text-white"
-                            }`}
-                          >
-                            {isCorrect ? (
-                              <FaCheckCircle className="text-sm" />
-                            ) : (
-                              <FaTimesCircle className="text-sm" />
-                            )}
-                          </div>
-                          <div className="flex-1">
-                            <p className="font-semibold text-gray-900 mb-2">
-                              Question {index + 1}: {answer.question}
-                            </p>
-                            <div className="space-y-2">
-                              {answer.options && answer.options.map((option, optIndex) => {
-                                const isSelected = optIndex === answer.selectedAnswer;
-                                const isCorrectOption = optIndex === answer.correctAnswer;
-                                return (
-                                  <div
-                                    key={optIndex}
-                                    className={`px-3 py-2 rounded-lg text-sm ${
-                                      isCorrectOption
-                                        ? "bg-green-200 text-green-900 font-semibold"
-                                        : isSelected
-                                        ? "bg-red-200 text-red-900 font-semibold"
-                                        : "bg-white text-gray-700"
-                                    }`}
-                                  >
-                                    {String.fromCharCode(65 + optIndex)}. {option}
-                                    {isCorrectOption && " ✓ (Correct)"}
-                                    {isSelected && !isCorrectOption && " ✗ (Your answer)"}
-                                  </div>
-                                );
-                              })}
+                {!detailedAnalysis.answers || detailedAnalysis.answers.length === 0 || typeof detailedAnalysis.answers[0] === 'number' ? (
+                  <div className="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-6 text-center">
+                    <div className="text-5xl mb-3">⚠️</div>
+                    <h4 className="text-lg font-bold text-gray-900 mb-2">
+                      Detailed Analysis Not Available
+                    </h4>
+                    <p className="text-gray-600 text-sm">
+                      This result was saved before the detailed analysis feature was added.
+                      <br />
+                      Only new test results will have question-by-question review.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {detailedAnalysis.answers.map((answer, index) => {
+                      const isCorrect = answer.selectedAnswer === answer.correctAnswer;
+                      return (
+                        <div
+                          key={index}
+                          className={`border-2 rounded-xl p-4 ${
+                            isCorrect
+                              ? "border-green-200 bg-green-50"
+                              : "border-red-200 bg-red-50"
+                          }`}
+                        >
+                          <div className="flex items-start gap-3 mb-3">
+                            <div
+                              className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                                isCorrect
+                                  ? "bg-green-500 text-white"
+                                  : "bg-red-500 text-white"
+                              }`}
+                            >
+                              {isCorrect ? (
+                                <FaCheckCircle className="text-sm" />
+                              ) : (
+                                <FaTimesCircle className="text-sm" />
+                              )}
+                            </div>
+                            <div className="flex-1">
+                              <p className="font-semibold text-gray-900 mb-2">
+                                Question {index + 1}: {answer.question}
+                              </p>
+                              <div className="space-y-2">
+                                {answer.options && answer.options.map((option, optIndex) => {
+                                  const isSelected = optIndex === answer.selectedAnswer;
+                                  const isCorrectOption = optIndex === answer.correctAnswer;
+                                  return (
+                                    <div
+                                      key={optIndex}
+                                      className={`px-3 py-2 rounded-lg text-sm ${
+                                        isCorrectOption
+                                          ? "bg-green-200 text-green-900 font-semibold"
+                                          : isSelected
+                                          ? "bg-red-200 text-red-900 font-semibold"
+                                          : "bg-white text-gray-700"
+                                      }`}
+                                    >
+                                      {String.fromCharCode(65 + optIndex)}. {option}
+                                      {isCorrectOption && " ✓ (Correct)"}
+                                      {isSelected && !isCorrectOption && " ✗ (Your answer)"}
+                                    </div>
+                                  );
+                                })}
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
               {/* Close Button */}
