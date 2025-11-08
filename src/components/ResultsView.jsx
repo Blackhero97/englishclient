@@ -318,7 +318,7 @@ function ResultsView({ onBack }) {
                     Detailed Analysis
                   </h2>
                   <p className="text-blue-100 text-sm">
-                    {detailedAnalysis.firstName} {detailedAnalysis.lastName} - {detailedAnalysis.testName}
+                    {detailedAnalysis?.firstName} {detailedAnalysis?.lastName} - {detailedAnalysis?.testName}
                   </p>
                 </div>
                 <button
@@ -336,19 +336,19 @@ function ResultsView({ onBack }) {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                 <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 text-center">
                   <div className="text-3xl font-bold text-blue-600 mb-1">
-                    {detailedAnalysis.percentage}%
+                    {detailedAnalysis?.percentage || 0}%
                   </div>
                   <div className="text-sm text-gray-600">Final Score</div>
                 </div>
                 <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 text-center">
                   <div className="text-3xl font-bold text-green-600 mb-1">
-                    {detailedAnalysis.correctAnswers}
+                    {detailedAnalysis?.correctAnswers || 0}
                   </div>
                   <div className="text-sm text-gray-600">Correct Answers</div>
                 </div>
                 <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-4 text-center">
                   <div className="text-3xl font-bold text-red-600 mb-1">
-                    {detailedAnalysis.wrongAnswers}
+                    {detailedAnalysis?.wrongAnswers || 0}
                   </div>
                   <div className="text-sm text-gray-600">Wrong Answers</div>
                 </div>
@@ -360,7 +360,7 @@ function ResultsView({ onBack }) {
                   <FaClipboardList className="text-blue-600" />
                   Question by Question Review
                 </h3>
-                {!detailedAnalysis.answers || detailedAnalysis.answers.length === 0 || typeof detailedAnalysis.answers[0] === 'number' ? (
+                {!detailedAnalysis?.answers || detailedAnalysis.answers.length === 0 || typeof detailedAnalysis.answers[0] === 'number' ? (
                   <div className="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-6 text-center">
                     <div className="text-5xl mb-3">⚠️</div>
                     <h4 className="text-lg font-bold text-gray-900 mb-2">
