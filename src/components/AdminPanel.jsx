@@ -525,17 +525,6 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    setShowCreateLesson(true);
-                  }}
-                  className="hidden lg:flex items-center gap-1.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-3 py-2 rounded-lg font-semibold transition-all text-xs shadow-md hover:shadow-lg"
-                  title="Manage Lessons"
-                >
-                  📖
-                  <span className="hidden xl:inline">Lessons</span>
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
                     setShowNewTestForm(true);
                     setShowTestList(true);
                   }}
