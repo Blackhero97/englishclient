@@ -14,22 +14,9 @@ import {
 import ReactMarkdown from "react-markdown";
 import { toast } from "react-toastify";
 import AIChatbot from "./AIChatbot";
+import { defaultLessons } from "../data/defaultLessons";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
-
-// Import default lessons
-const defaultLessons = [
-  {
-    id: "lesson-1",
-    title: "The English Alphabet",
-    category: "Basics",
-    level: "Beginner",
-    description: "Learn all 26 letters of the English alphabet with pronunciation",
-    content: `# The English Alphabet\n\n## Overview\nThe English alphabet has 26 letters: A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z\n\n## Vowels\nThere are 5 vowels: **A, E, I, O, U**\n\n## Consonants\nThe remaining 21 letters are consonants.\n\n## Practice\nTry to write the alphabet in both uppercase and lowercase:\n- Uppercase: A B C D E F G H I J K L M N O P Q R S T U V W X Y Z\n- Lowercase: a b c d e f g h i j k l m n o p q r s t u v w x y z`,
-    duration: "10 min",
-  },
-  // Add other default lessons here if needed
-];
 
 function LessonDetail() {
   const { id } = useParams();
@@ -76,12 +63,16 @@ function LessonDetail() {
   };
 
   const checkBookmark = () => {
-    const bookmarks = JSON.parse(localStorage.getItem("bookmarkedLessons") || "[]");
+    const bookmarks = JSON.parse(
+      localStorage.getItem("bookmarkedLessons") || "[]"
+    );
     setIsBookmarked(bookmarks.includes(id));
   };
 
   const toggleBookmark = () => {
-    const bookmarks = JSON.parse(localStorage.getItem("bookmarkedLessons") || "[]");
+    const bookmarks = JSON.parse(
+      localStorage.getItem("bookmarkedLessons") || "[]"
+    );
     if (isBookmarked) {
       const updated = bookmarks.filter((lessonId) => lessonId !== id);
       localStorage.setItem("bookmarkedLessons", JSON.stringify(updated));
@@ -118,15 +109,19 @@ function LessonDetail() {
           <div className="flex items-center justify-between mb-4">
             <button
               onClick={() => navigate("/lessons")}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all"
+              className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-lg transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
             >
-              <FaArrowLeft />
-              <span className="font-semibold">Back to Lessons</span>
+              <FaArrowLeft className="text-sm" />
+              <span>Back to Lessons</span>
             </button>
             <div className="flex items-center gap-2">
               <button
                 onClick={toggleBookmark}
-                className="p-3 bg-gray-100 hover:bg-yellow-100 rounded-lg transition-all"
+                className={`p-3 rounded-lg transition-all shadow-sm hover:shadow-md ${
+                  isBookmarked
+                    ? "bg-yellow-100 hover:bg-yellow-200"
+                    : "bg-gray-100 hover:bg-gray-200"
+                }`}
               >
                 {isBookmarked ? (
                   <FaBookmark className="text-yellow-500 text-xl" />
@@ -136,7 +131,7 @@ function LessonDetail() {
               </button>
               <button
                 onClick={() => window.print()}
-                className="p-3 bg-gray-100 hover:bg-blue-100 rounded-lg transition-all"
+                className="p-3 bg-gray-100 hover:bg-blue-100 rounded-lg transition-all shadow-sm hover:shadow-md"
               >
                 <FaPrint className="text-gray-600 text-xl" />
               </button>
