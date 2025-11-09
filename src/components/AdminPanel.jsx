@@ -72,16 +72,23 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
     }
   };
 
-  const handleSaveLesson = (savedLesson) => {
+  const handleSaveLesson = async (savedLesson) => {
     if (editingLesson) {
+      // Update existing lesson in the list
       setLessons(
         lessons.map((l) => (l.id === savedLesson.id ? savedLesson : l))
       );
+      toast.success("Lesson updated successfully!");
     } else {
+      // Add new lesson to the list
       setLessons([...lessons, savedLesson]);
+      toast.success("Lesson created successfully!");
     }
     setShowCreateLesson(false);
     setEditingLesson(null);
+
+    // Refresh lessons from server to ensure sync
+    await fetchLessons();
   };
 
   const handleEditLesson = (lesson) => {
