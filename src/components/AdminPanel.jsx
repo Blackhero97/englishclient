@@ -422,6 +422,7 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                 onClick={() => {
                   setAdminTab("lessons");
                   setEditingTest(null);
+                  fetchLessons(); // Refresh lessons when tab is clicked
                 }}
                 className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all ${
                   adminTab === "lessons"
@@ -467,6 +468,7 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
               onClick={() => {
                 setAdminTab("lessons");
                 setEditingTest(null); // Clear editing test when switching to lessons
+                fetchLessons(); // Refresh lessons when tab is clicked
               }}
               className={`flex-1 py-2.5 rounded-lg font-semibold text-xs transition-all ${
                 adminTab === "lessons"
