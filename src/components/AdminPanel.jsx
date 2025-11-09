@@ -55,6 +55,10 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
   const [showCreateLesson, setShowCreateLesson] = useState(false);
   const [editingLesson, setEditingLesson] = useState(null);
 
+  // Pagination for lessons
+  const [currentLessonPage, setCurrentLessonPage] = useState(1);
+  const lessonsPerPage = 6; // 3x2 grid on desktop
+
   // Fetch lessons on mount
   useEffect(() => {
     fetchLessons();
@@ -83,6 +87,8 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
       // Add new lesson to the list
       setLessons([...lessons, savedLesson]);
       toast.success("Lesson created successfully!");
+      // Reset to first page when adding new lesson
+      setCurrentLessonPage(1);
     }
     setShowCreateLesson(false);
     setEditingLesson(null);
@@ -105,14 +111,31 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
       });
 
       if (response.ok) {
-        setLessons(lessons.filter((l) => l.id !== lessonId));
+        const updatedLessons = lessons.filter((l) => l.id !== lessonId);
+        setLessons(updatedLessons);
         toast.success("Lesson deleted successfully!");
+
+        // Adjust page if current page becomes empty
+        const newTotalPages = Math.ceil(updatedLessons.length / lessonsPerPage);
+        if (currentLessonPage > newTotalPages && newTotalPages > 0) {
+          setCurrentLessonPage(newTotalPages);
+        }
       } else {
         toast.error("Failed to delete lesson");
       }
     } catch (error) {
       toast.error("Error deleting lesson");
     }
+  };
+
+  // Pagination for lessons
+  const indexOfLastLesson = currentLessonPage * lessonsPerPage;
+  const indexOfFirstLesson = indexOfLastLesson - lessonsPerPage;
+  const currentLessons = lessons.slice(indexOfFirstLesson, indexOfLastLesson);
+  const totalLessonPages = Math.ceil(lessons.length / lessonsPerPage);
+
+  const handleLessonPageChange = (pageNumber) => {
+    setCurrentLessonPage(pageNumber);
   };
 
   // Save test helper function
@@ -673,6 +696,11 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="text-lg font-bold text-gray-900">
                           Manage Lessons
+                          {lessons.length > 0 && (
+                            <span className="text-sm font-normal text-gray-500 ml-2">
+                              ({lessons.length})
+                            </span>
+                          )}
                         </h3>
                         <button
                           onClick={() => setShowCreateLesson(true)}
@@ -682,13 +710,13 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                           New Lesson
                         </button>
                       </div>
-                      <div className="space-y-3">
+                      <div className="space-y-3 mb-4">
                         {lessons.length === 0 ? (
                           <p className="text-gray-500 text-center py-8">
                             No lessons yet. Create your first lesson!
                           </p>
                         ) : (
-                          lessons.map((lesson) => (
+                          currentLessons.map((lesson) => (
                             <div
                               key={lesson.id}
                               className="bg-gray-50 rounded-lg p-4 border border-gray-200"
@@ -745,6 +773,43 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                           ))
                         )}
                       </div>
+
+                      {/* Mobile Pagination */}
+                      {lessons.length > lessonsPerPage && (
+                        <div className="flex justify-center items-center gap-2 pt-4 border-t border-gray-200">
+                          <button
+                            onClick={() =>
+                              handleLessonPageChange(currentLessonPage - 1)
+                            }
+                            disabled={currentLessonPage === 1}
+                            className={`px-3 py-2 rounded-lg font-semibold text-sm transition-all ${
+                              currentLessonPage === 1
+                                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                : "bg-purple-600 text-white hover:bg-purple-700"
+                            }`}
+                          >
+                            Prev
+                          </button>
+
+                          <span className="px-3 py-2 bg-purple-100 text-purple-700 rounded-lg font-semibold text-sm">
+                            {currentLessonPage} / {totalLessonPages}
+                          </span>
+
+                          <button
+                            onClick={() =>
+                              handleLessonPageChange(currentLessonPage + 1)
+                            }
+                            disabled={currentLessonPage === totalLessonPages}
+                            className={`px-3 py-2 rounded-lg font-semibold text-sm transition-all ${
+                              currentLessonPage === totalLessonPages
+                                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                : "bg-purple-600 text-white hover:bg-purple-700"
+                            }`}
+                          >
+                            Next
+                          </button>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -770,6 +835,11 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                     <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                       <FaBook className="text-purple-600" />
                       Manage Lessons
+                      {lessons.length > 0 && (
+                        <span className="text-sm font-normal text-gray-500">
+                          ({lessons.length} total)
+                        </span>
+                      )}
                     </h3>
                     <button
                       onClick={() => {
@@ -782,14 +852,14 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                       New Lesson
                     </button>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     {lessons.length === 0 ? (
                       <div className="col-span-2 text-gray-500 text-center py-12 bg-gray-50 rounded-lg">
                         <FaBook className="text-4xl mx-auto mb-3 text-gray-400" />
                         <p>No lessons yet. Create your first lesson!</p>
                       </div>
                     ) : (
-                      lessons.map((lesson) => (
+                      currentLessons.map((lesson) => (
                         <div
                           key={lesson.id}
                           className="bg-gradient-to-br from-gray-50 to-white rounded-lg p-4 border border-gray-200 hover:border-purple-300 hover:shadow-md transition-all"
@@ -846,6 +916,58 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                       ))
                     )}
                   </div>
+
+                  {/* Pagination for Lessons */}
+                  {lessons.length > lessonsPerPage && (
+                    <div className="flex justify-center items-center gap-2 mt-4">
+                      <button
+                        onClick={() =>
+                          handleLessonPageChange(currentLessonPage - 1)
+                        }
+                        disabled={currentLessonPage === 1}
+                        className={`px-3 py-2 rounded-lg font-semibold text-sm transition-all ${
+                          currentLessonPage === 1
+                            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                            : "bg-purple-600 text-white hover:bg-purple-700"
+                        }`}
+                      >
+                        Previous
+                      </button>
+
+                      <div className="flex gap-1">
+                        {Array.from(
+                          { length: totalLessonPages },
+                          (_, i) => i + 1
+                        ).map((page) => (
+                          <button
+                            key={page}
+                            onClick={() => handleLessonPageChange(page)}
+                            className={`px-3 py-2 rounded-lg font-semibold text-sm transition-all ${
+                              currentLessonPage === page
+                                ? "bg-purple-600 text-white"
+                                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                            }`}
+                          >
+                            {page}
+                          </button>
+                        ))}
+                      </div>
+
+                      <button
+                        onClick={() =>
+                          handleLessonPageChange(currentLessonPage + 1)
+                        }
+                        disabled={currentLessonPage === totalLessonPages}
+                        className={`px-3 py-2 rounded-lg font-semibold text-sm transition-all ${
+                          currentLessonPage === totalLessonPages
+                            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                            : "bg-purple-600 text-white hover:bg-purple-700"
+                        }`}
+                      >
+                        Next
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
 
