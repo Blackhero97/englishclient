@@ -832,8 +832,8 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                 </div>
               )}
 
-              {/* Desktop - Lessons Management Section - Only show when NOT editing test */}
-              {!editingTest && (
+              {/* Desktop - Lessons Management Section */}
+              {adminTab === "lessons" && (
                 <div className="hidden lg:block mb-6">
                   <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
                     <div className="flex items-center justify-between mb-4">
