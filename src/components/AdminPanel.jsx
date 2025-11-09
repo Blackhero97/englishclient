@@ -504,176 +504,176 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-5">
-          {/* Left: Test List */}
-          <div
-            className={`lg:col-span-4 bg-white rounded-xl shadow-lg border border-gray-100 ${
-              adminTab !== "tests" ? "hidden lg:block" : ""
-            }`}
-          >
-            {/* Header */}
-            <div
-              className="flex justify-between items-center p-4 border-b border-gray-200 cursor-pointer lg:cursor-default"
-              onClick={() => setShowTestList(!showTestList)}
-            >
-              <h2 className="text-base md:text-lg font-bold text-gray-900 flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-lg flex items-center justify-center shadow-md">
-                  <FaBook className="text-white text-sm" />
-                </div>
-                <span>Tests ({tests.length})</span>
-              </h2>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowNewTestForm(true);
-                    setShowTestList(true);
-                  }}
-                  className="flex items-center gap-1.5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white px-3 py-2 rounded-lg font-semibold transition-all text-xs shadow-md hover:shadow-lg"
-                >
-                  <FaPlus className="text-xs" />
-                  <span className="hidden sm:inline">New</span>
-                </button>
-                <div className="lg:hidden">{showTestList ? "▼" : "▶"}</div>
-              </div>
-            </div>
-
-            {/* Collapsible Content */}
-            <div
-              className={`${
-                showTestList ? "block" : "hidden lg:block"
-              } p-3 md:p-4`}
-            >
-              {showNewTestForm && (
-                <div className="mb-4 p-4 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-lg border border-indigo-200 shadow-sm">
-                  <h3 className="text-gray-900 font-bold text-sm mb-3 flex items-center gap-2">
-                    <div className="w-6 h-6 bg-indigo-600 rounded-lg flex items-center justify-center">
-                      <FaPlus className="text-white text-xs" />
-                    </div>
-                    Create New Test
-                  </h3>
-                  <div className="space-y-2.5">
-                    <div>
-                      <label className="block text-gray-700 font-semibold mb-1.5 text-xs">
-                        Test Name *
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="e.g., Intermediate Level"
-                        value={newTestName}
-                        onChange={(e) => setNewTestName(e.target.value)}
-                        className="w-full px-3 py-2 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all text-gray-900 text-sm"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 font-semibold mb-1.5 text-xs">
-                        Description
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="Brief description"
-                        value={newTestDesc}
-                        onChange={(e) => setNewTestDesc(e.target.value)}
-                        className="w-full px-3 py-2 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all text-gray-900 text-sm"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 font-semibold mb-1.5 text-xs">
-                        Duration (minutes) *
-                      </label>
-                      <input
-                        type="number"
-                        placeholder="45"
-                        value={newTestDuration}
-                        onChange={(e) =>
-                          setNewTestDuration(parseInt(e.target.value))
-                        }
-                        className="w-full px-3 py-2 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all text-gray-900 text-sm"
-                      />
-                    </div>
+          {/* Left: Test List - Only show when Tests tab is active */}
+          {adminTab === "tests" && (
+            <div className="lg:col-span-4 bg-white rounded-xl shadow-lg border border-gray-100">
+              {/* Header */}
+              <div
+                className="flex justify-between items-center p-4 border-b border-gray-200 cursor-pointer lg:cursor-default"
+                onClick={() => setShowTestList(!showTestList)}
+              >
+                <h2 className="text-base md:text-lg font-bold text-gray-900 flex items-center gap-2">
+                  <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-lg flex items-center justify-center shadow-md">
+                    <FaBook className="text-white text-sm" />
                   </div>
-                  <div className="flex gap-2 mt-3">
-                    <button
-                      onClick={handleCreateTest}
-                      className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white py-2.5 rounded-lg font-semibold transition-all hover:shadow-lg text-sm"
-                    >
-                      <FaCheck className="text-xs" />
-                      Create
-                    </button>
-                    <button
-                      onClick={() => setShowNewTestForm(false)}
-                      className="px-4 flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-700 py-2.5 rounded-lg font-semibold transition-all text-sm border-2 border-gray-300"
-                    >
-                      <FaTimes className="text-xs" />
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              <div className="space-y-2 max-h-[calc(100vh-400px)] overflow-y-auto pr-1">
-                {tests.length === 0 && (
-                  <div className="text-center py-8 text-gray-400">
-                    <FaBook className="text-3xl mx-auto mb-2 opacity-50" />
-                    <p className="text-xs">No tests yet</p>
-                    <p className="text-[10px] mt-1">Click "New" to create</p>
-                  </div>
-                )}
-                {tests.map((test) => (
-                  <div
-                    key={test.id}
-                    className={`group p-3 rounded-lg border cursor-pointer transition-all hover:shadow-md ${
-                      editingTest?.id === test.id
-                        ? "bg-gradient-to-r from-indigo-50 to-blue-50 border-indigo-400 shadow-sm"
-                        : "bg-white border-gray-200 hover:border-indigo-300"
-                    }`}
-                    onClick={() => setEditingTest(test)}
+                  <span>Tests ({tests.length})</span>
+                </h2>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowNewTestForm(true);
+                      setShowTestList(true);
+                    }}
+                    className="flex items-center gap-1.5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white px-3 py-2 rounded-lg font-semibold transition-all text-xs shadow-md hover:shadow-lg"
                   >
-                    <div className="flex justify-between items-start mb-1.5">
-                      <h3 className="font-bold text-gray-900 text-sm flex items-center gap-2 flex-1">
-                        <div
-                          className={`w-2 h-2 rounded-full ${
-                            editingTest?.id === test.id
-                              ? "bg-indigo-600"
-                              : "bg-gray-300"
-                          }`}
-                        ></div>
-                        <span className="line-clamp-1">{test.name}</span>
-                      </h3>
+                    <FaPlus className="text-xs" />
+                    <span className="hidden sm:inline">New</span>
+                  </button>
+                  <div className="lg:hidden">{showTestList ? "▼" : "▶"}</div>
+                </div>
+              </div>
+
+              {/* Collapsible Content */}
+              <div
+                className={`${
+                  showTestList ? "block" : "hidden lg:block"
+                } p-3 md:p-4`}
+              >
+                {showNewTestForm && (
+                  <div className="mb-4 p-4 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-lg border border-indigo-200 shadow-sm">
+                    <h3 className="text-gray-900 font-bold text-sm mb-3 flex items-center gap-2">
+                      <div className="w-6 h-6 bg-indigo-600 rounded-lg flex items-center justify-center">
+                        <FaPlus className="text-white text-xs" />
+                      </div>
+                      Create New Test
+                    </h3>
+                    <div className="space-y-2.5">
+                      <div>
+                        <label className="block text-gray-700 font-semibold mb-1.5 text-xs">
+                          Test Name *
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g., Intermediate Level"
+                          value={newTestName}
+                          onChange={(e) => setNewTestName(e.target.value)}
+                          className="w-full px-3 py-2 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all text-gray-900 text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-gray-700 font-semibold mb-1.5 text-xs">
+                          Description
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Brief description"
+                          value={newTestDesc}
+                          onChange={(e) => setNewTestDesc(e.target.value)}
+                          className="w-full px-3 py-2 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all text-gray-900 text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-gray-700 font-semibold mb-1.5 text-xs">
+                          Duration (minutes) *
+                        </label>
+                        <input
+                          type="number"
+                          placeholder="45"
+                          value={newTestDuration}
+                          onChange={(e) =>
+                            setNewTestDuration(parseInt(e.target.value))
+                          }
+                          className="w-full px-3 py-2 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all text-gray-900 text-sm"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-2 mt-3">
                       <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteTest(test.id);
-                        }}
-                        className="p-1 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition-all opacity-0 group-hover:opacity-100"
-                        title="Delete"
+                        onClick={handleCreateTest}
+                        className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white py-2.5 rounded-lg font-semibold transition-all hover:shadow-lg text-sm"
                       >
-                        <FaTrash className="text-xs" />
+                        <FaCheck className="text-xs" />
+                        Create
+                      </button>
+                      <button
+                        onClick={() => setShowNewTestForm(false)}
+                        className="px-4 flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-700 py-2.5 rounded-lg font-semibold transition-all text-sm border-2 border-gray-300"
+                      >
+                        <FaTimes className="text-xs" />
                       </button>
                     </div>
-                    {test.description && (
-                      <p className="text-xs text-gray-500 mb-1.5 line-clamp-1">
-                        {test.description}
-                      </p>
-                    )}
-                    <div className="flex items-center gap-1.5 text-xs">
-                      <span className="flex items-center gap-1 bg-purple-50 text-purple-700 px-2 py-0.5 rounded border border-purple-200">
-                        <FaQuestionCircle className="text-[10px]" />
-                        <span className="font-semibold">
-                          {test.questions.length}
-                        </span>
-                      </span>
-                      <span className="flex items-center gap-1 bg-blue-50 text-blue-700 px-2 py-0.5 rounded border border-blue-200">
-                        <FaClock className="text-[10px]" />
-                        <span className="font-semibold">{test.duration}m</span>
-                      </span>
-                    </div>
                   </div>
-                ))}
+                )}
+
+                <div className="space-y-2 max-h-[calc(100vh-400px)] overflow-y-auto pr-1">
+                  {tests.length === 0 && (
+                    <div className="text-center py-8 text-gray-400">
+                      <FaBook className="text-3xl mx-auto mb-2 opacity-50" />
+                      <p className="text-xs">No tests yet</p>
+                      <p className="text-[10px] mt-1">Click "New" to create</p>
+                    </div>
+                  )}
+                  {tests.map((test) => (
+                    <div
+                      key={test.id}
+                      className={`group p-3 rounded-lg border cursor-pointer transition-all hover:shadow-md ${
+                        editingTest?.id === test.id
+                          ? "bg-gradient-to-r from-indigo-50 to-blue-50 border-indigo-400 shadow-sm"
+                          : "bg-white border-gray-200 hover:border-indigo-300"
+                      }`}
+                      onClick={() => setEditingTest(test)}
+                    >
+                      <div className="flex justify-between items-start mb-1.5">
+                        <h3 className="font-bold text-gray-900 text-sm flex items-center gap-2 flex-1">
+                          <div
+                            className={`w-2 h-2 rounded-full ${
+                              editingTest?.id === test.id
+                                ? "bg-indigo-600"
+                                : "bg-gray-300"
+                            }`}
+                          ></div>
+                          <span className="line-clamp-1">{test.name}</span>
+                        </h3>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteTest(test.id);
+                          }}
+                          className="p-1 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition-all opacity-0 group-hover:opacity-100"
+                          title="Delete"
+                        >
+                          <FaTrash className="text-xs" />
+                        </button>
+                      </div>
+                      {test.description && (
+                        <p className="text-xs text-gray-500 mb-1.5 line-clamp-1">
+                          {test.description}
+                        </p>
+                      )}
+                      <div className="flex items-center gap-1.5 text-xs">
+                        <span className="flex items-center gap-1 bg-purple-50 text-purple-700 px-2 py-0.5 rounded border border-purple-200">
+                          <FaQuestionCircle className="text-[10px]" />
+                          <span className="font-semibold">
+                            {test.questions.length}
+                          </span>
+                        </span>
+                        <span className="flex items-center gap-1 bg-blue-50 text-blue-700 px-2 py-0.5 rounded border border-blue-200">
+                          <FaClock className="text-[10px]" />
+                          <span className="font-semibold">
+                            {test.duration}m
+                          </span>
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Right: Questions and Form Combined */}
-          {editingTest && (
+          {editingTest && adminTab === "tests" && (
             <div
               className={`lg:col-span-8 bg-white rounded-xl shadow-lg border border-gray-100 ${
                 adminTab === "tests" ? "hidden lg:block" : ""
