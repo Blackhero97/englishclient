@@ -100,6 +100,7 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
   const handleEditLesson = (lesson) => {
     setEditingLesson(lesson);
     setShowCreateLesson(true);
+    setAdminTab("lessons"); // Ensure we're on lessons tab when editing
   };
 
   const handleDeleteLesson = async (lessonId) => {
