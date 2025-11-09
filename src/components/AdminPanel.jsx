@@ -401,11 +401,39 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                   Admin Panel
                 </h1>
                 <p className="text-blue-100 text-xs md:text-sm font-medium">
-                  Manage tests & questions
+                  Manage tests, lessons & questions
                 </p>
               </div>
             </div>
-            <div className="flex gap-2 w-full sm:w-auto">
+
+            {/* Desktop Tabs */}
+            <div className="hidden lg:flex gap-2 bg-white/10 backdrop-blur-sm rounded-xl p-1.5">
+              <button
+                onClick={() => setAdminTab("tests")}
+                className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all ${
+                  adminTab === "tests"
+                    ? "bg-white text-indigo-600 shadow-md"
+                    : "text-white/80 hover:bg-white/10"
+                }`}
+              >
+                📚 Tests
+              </button>
+              <button
+                onClick={() => {
+                  setAdminTab("lessons");
+                  setEditingTest(null);
+                }}
+                className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all ${
+                  adminTab === "lessons"
+                    ? "bg-white text-indigo-600 shadow-md"
+                    : "text-white/80 hover:bg-white/10"
+                }`}
+              >
+                📖 Lessons
+              </button>
+            </div>
+
+            <div className="flex gap-2 w-full sm:w-auto lg:w-auto">
               <button
                 onClick={() => (window.location.href = "/admin-results")}
                 className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white/95 hover:bg-white text-indigo-600 px-4 md:px-5 py-2 md:py-2.5 rounded-lg md:rounded-xl font-bold transition-all hover:shadow-xl text-sm"
