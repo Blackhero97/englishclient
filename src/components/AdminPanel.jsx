@@ -435,7 +435,10 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
               📚 Tests
             </button>
             <button
-              onClick={() => setAdminTab("lessons")}
+              onClick={() => {
+                setAdminTab("lessons");
+                setEditingTest(null); // Clear editing test when switching to lessons
+              }}
               className={`flex-1 py-2.5 rounded-lg font-semibold text-xs transition-all ${
                 adminTab === "lessons"
                   ? "bg-white text-indigo-600 shadow-md"
@@ -1209,7 +1212,7 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
       </div>
 
       {/* Lessons Modal - Desktop & Mobile */}
-      {showCreateLesson && adminTab === "lessons" && (
+      {showCreateLesson && (
         <div className="hidden lg:flex fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <CreateLesson
