@@ -704,27 +704,37 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
 
               {/* Test Questions Section - Only show when editing test */}
               {editingTest && (
-                <div className="grid lg:grid-cols-2 gap-5">
-                  {/* Questions List */}
-                  <div>
-                    <div className="flex justify-between items-center mb-3">
-                      <button
-                        onClick={() => setShowAIGenerator(!showAIGenerator)}
-                        className="px-3 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-semibold text-sm transition-all hover:shadow-lg flex items-center gap-2"
-                      >
-                        <FaRobot />
-                        {showAIGenerator
-                          ? "Hide AI Generator"
-                          : "Generate with AI"}
-                      </button>
-                      <h3 className="text-base font-bold text-gray-800 flex items-center gap-2">
-                        <FaListOl className="text-purple-600 text-sm" />
-                        Questions List
-                      </h3>
-                      <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full font-semibold">
-                        {editingTest.questions.length} total
-                      </span>
+                <>
+                  {/* AI Test Generator - Full Width When Open */}
+                  {showAIGenerator && (
+                    <div className="mb-5">
+                      <AITestGenerator
+                        onQuestionsGenerated={handleAIQuestionsGenerated}
+                      />
                     </div>
+                  )}
+
+                  <div className="grid lg:grid-cols-2 gap-5">
+                    {/* Questions List */}
+                    <div>
+                      <div className="flex justify-between items-center mb-3">
+                        <button
+                          onClick={() => setShowAIGenerator(!showAIGenerator)}
+                          className="px-3 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-semibold text-sm transition-all hover:shadow-lg flex items-center gap-2"
+                        >
+                          <FaRobot />
+                          {showAIGenerator
+                            ? "Hide AI Generator"
+                            : "Generate with AI"}
+                        </button>
+                        <h3 className="text-base font-bold text-gray-800 flex items-center gap-2">
+                          <FaListOl className="text-purple-600 text-sm" />
+                          Questions List
+                        </h3>
+                        <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full font-semibold">
+                          {editingTest.questions.length} total
+                        </span>
+                      </div>
                     <div className="space-y-2 max-h-[calc(100vh-350px)] overflow-y-auto pr-2">
                       {editingTest.questions.length === 0 && (
                         <div className="text-center py-8 text-gray-400 bg-gray-50 rounded-lg border border-dashed border-gray-300">
@@ -929,6 +939,7 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                     </div>
                   </div>
                 </div>
+                </>
               )}
             </div>
           )}

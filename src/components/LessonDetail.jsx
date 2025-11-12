@@ -10,9 +10,12 @@ import {
   FaBookmark,
   FaRegBookmark,
   FaSpinner,
+  FaFilePdf,
+  FaDownload,
 } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
 import { toast } from "react-toastify";
+import jsPDF from "jspdf";
 import AIChatbot from "./AIChatbot";
 import { defaultLessons } from "../data/defaultLessons";
 
@@ -86,6 +89,86 @@ function LessonDetail() {
     }
   };
 
+  const exportLessonToPDF = () => {
+    const doc = new jsPDF();
+    
+    // Add title
+    doc.setFontSize(24);
+    doc.setTextColor(147, 51, 234); // Purple color
+    doc.text(lesson.title, 20, 20);
+    
+    // Add metadata
+    doc.setFontSize(10);
+    doc.setTextColor(128, 128, 128);
+    doc.text(`Level: ${lesson.level} | Category: ${lesson.category}`, 20, 30);
+    doc.text(`Duration: ${lesson.duration}`, 20, 36);
+    
+    // Add line separator
+    doc.setDrawColor(147, 51, 234);
+    doc.setLineWidth(0.5);
+    doc.line(20, 40, 190, 40);
+    
+    // Add description
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text("Description:", 20, 50);
+    
+    doc.setFontSize(11);
+    doc.setTextColor(64, 64, 64);
+    const descLines = doc.splitTextToSize(lesson.description, 170);
+    doc.text(descLines, 20, 58);
+    
+    let yPosition = 58 + (descLines.length * 6) + 10;
+    
+    // Add content
+    if (lesson.content) {
+      doc.setFontSize(12);
+      doc.setTextColor(0, 0, 0);
+      doc.text("Lesson Content:", 20, yPosition);
+      yPosition += 8;
+      
+      // Convert markdown to plain text (simple version)
+      const plainContent = lesson.content
+        .replace(/[#*_`]/g, '')
+        .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
+        .trim();
+      
+      doc.setFontSize(10);
+      doc.setTextColor(64, 64, 64);
+      
+      const contentLines = doc.splitTextToSize(plainContent, 170);
+      
+      // Handle pagination
+      contentLines.forEach((line) => {
+        if (yPosition > 270) {
+          doc.addPage();
+          yPosition = 20;
+        }
+        doc.text(line, 20, yPosition);
+        yPosition += 6;
+      });
+    }
+    
+    // Add footer on all pages
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setTextColor(128, 128, 128);
+      doc.text(
+        `Page ${i} of ${pageCount} - Downloaded from English Learning Platform`,
+        105,
+        285,
+        { align: "center" }
+      );
+    }
+    
+    // Save PDF
+    const fileName = `${lesson.title.replace(/\s+/g, '_')}_Lesson.pdf`;
+    doc.save(fileName);
+    toast.success("Lesson downloaded as PDF!");
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-red-50 flex items-center justify-center">
@@ -116,12 +199,21 @@ function LessonDetail() {
             </button>
             <div className="flex items-center gap-2">
               <button
+                onClick={exportLessonToPDF}
+                className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold rounded-lg transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
+                title="Download as PDF"
+              >
+                <FaFilePdf className="text-lg" />
+                <span className="hidden sm:inline">Download PDF</span>
+              </button>
+              <button
                 onClick={toggleBookmark}
                 className={`p-3 rounded-lg transition-all shadow-sm hover:shadow-md ${
                   isBookmarked
                     ? "bg-yellow-100 hover:bg-yellow-200"
                     : "bg-gray-100 hover:bg-gray-200"
                 }`}
+                title={isBookmarked ? "Remove bookmark" : "Add bookmark"}
               >
                 {isBookmarked ? (
                   <FaBookmark className="text-yellow-500 text-xl" />
@@ -132,6 +224,7 @@ function LessonDetail() {
               <button
                 onClick={() => window.print()}
                 className="p-3 bg-gray-100 hover:bg-blue-100 rounded-lg transition-all shadow-sm hover:shadow-md"
+                title="Print lesson"
               >
                 <FaPrint className="text-gray-600 text-xl" />
               </button>

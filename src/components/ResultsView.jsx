@@ -7,8 +7,15 @@ import {
   FaClipboardList,
   FaChartBar,
   FaTimes,
+  FaFileExcel,
+  FaDownload,
+  FaFilePdf,
+  FaSearch,
 } from "react-icons/fa";
 import { toast } from "react-toastify";
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
@@ -17,6 +24,7 @@ function ResultsView({ onBack }) {
   const [loading, setLoading] = useState(true);
   const [expandedResult, setExpandedResult] = useState(null);
   const [detailedAnalysis, setDetailedAnalysis] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     fetchResults();
@@ -82,6 +90,151 @@ function ResultsView({ onBack }) {
     setDetailedAnalysis(null);
   };
 
+  const exportToExcel = () => {
+    if (results.length === 0) {
+      toast.warning("No results to export");
+      return;
+    }
+
+    // Prepare data for Excel
+    const excelData = results.map((result, index) => ({
+      "#": index + 1,
+      Date: formatDate(result.createdAt),
+      "First Name": result.firstName,
+      "Last Name": result.lastName,
+      "Test Name": result.testName,
+      "Total Questions": result.totalQuestions,
+      "Correct Answers": result.correctAnswers,
+      "Wrong Answers": result.wrongAnswers,
+      "Percentage": result.percentage + "%",
+      Status:
+        result.percentage >= 80
+          ? "Excellent"
+          : result.percentage >= 60
+          ? "Good"
+          : "Needs Improvement",
+    }));
+
+    // Create workbook and worksheet
+    const ws = XLSX.utils.json_to_sheet(excelData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Test Results");
+
+    // Set column widths
+    const colWidths = [
+      { wch: 5 },  // #
+      { wch: 20 }, // Date
+      { wch: 15 }, // First Name
+      { wch: 15 }, // Last Name
+      { wch: 25 }, // Test Name
+      { wch: 15 }, // Total Questions
+      { wch: 15 }, // Correct Answers
+      { wch: 15 }, // Wrong Answers
+      { wch: 12 }, // Percentage
+      { wch: 18 }, // Status
+    ];
+    ws["!cols"] = colWidths;
+
+    // Generate file name with current date
+    const fileName = `test_results_${
+      new Date().toISOString().split("T")[0]
+    }.xlsx`;
+
+    // Save file
+    XLSX.writeFile(wb, fileName);
+    toast.success(`Exported ${results.length} results to Excel!`);
+  };
+
+  const exportResultToPDF = (result) => {
+    const doc = new jsPDF();
+    
+    // Title
+    doc.setFontSize(20);
+    doc.setTextColor(37, 99, 235); // Blue color
+    doc.text("Test Result Certificate", 105, 20, { align: "center" });
+    
+    // Line separator
+    doc.setDrawColor(37, 99, 235);
+    doc.setLineWidth(0.5);
+    doc.line(20, 25, 190, 25);
+    
+    // Student Information
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`Student Name: ${result.firstName} ${result.lastName}`, 20, 40);
+    doc.text(`Test Name: ${result.testName}`, 20, 50);
+    doc.text(`Date: ${formatDate(result.createdAt)}`, 20, 60);
+    
+    // Results Box
+    doc.setFillColor(239, 246, 255); // Light blue background
+    doc.rect(20, 70, 170, 40, 'F');
+    
+    doc.setFontSize(14);
+    doc.setTextColor(37, 99, 235);
+    doc.text("Test Results", 105, 80, { align: "center" });
+    
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`Total Questions: ${result.totalQuestions}`, 30, 90);
+    doc.text(`Correct Answers: ${result.correctAnswers}`, 30, 98);
+    doc.text(`Wrong Answers: ${result.wrongAnswers}`, 120, 90);
+    doc.text(`Percentage: ${result.percentage}%`, 120, 98);
+    
+    // Status
+    const status = result.percentage >= 80 ? "Excellent" : result.percentage >= 60 ? "Good" : "Needs Improvement";
+    const statusColor = result.percentage >= 80 ? [34, 197, 94] : result.percentage >= 60 ? [234, 179, 8] : [239, 68, 68];
+    
+    doc.setFontSize(16);
+    doc.setTextColor(...statusColor);
+    doc.text(`Status: ${status}`, 105, 125, { align: "center" });
+    
+    // Detailed answers if available
+    if (result.answers && result.answers.length > 0) {
+      doc.setFontSize(12);
+      doc.setTextColor(0, 0, 0);
+      doc.text("Detailed Answers:", 20, 140);
+      
+      const tableData = result.answers.map((answer, index) => {
+        const isCorrect = typeof answer === 'number' ? answer === result.correctAnswers : answer;
+        return [
+          index + 1,
+          isCorrect ? "✓ Correct" : "✗ Wrong"
+        ];
+      });
+      
+      doc.autoTable({
+        startY: 145,
+        head: [['Question #', 'Result']],
+        body: tableData,
+        theme: 'striped',
+        headStyles: { fillColor: [37, 99, 235] },
+        alternateRowStyles: { fillColor: [239, 246, 255] },
+      });
+    }
+    
+    // Footer
+    const pageCount = doc.internal.getNumberOfPages();
+    doc.setFontSize(10);
+    doc.setTextColor(128, 128, 128);
+    doc.text(`Generated on ${new Date().toLocaleDateString()}`, 105, 280, { align: "center" });
+    
+    // Save PDF
+    const fileName = `${result.firstName}_${result.lastName}_${result.testName.replace(/\s+/g, '_')}_Result.pdf`;
+    doc.save(fileName);
+    toast.success("PDF downloaded successfully!");
+  };
+
+  // Filter results based on search query
+  const filteredResults = results.filter((result) => {
+    const searchLower = searchQuery.toLowerCase();
+    return (
+      result.firstName.toLowerCase().includes(searchLower) ||
+      result.lastName.toLowerCase().includes(searchLower) ||
+      result.testName.toLowerCase().includes(searchLower) ||
+      formatDate(result.createdAt).toLowerCase().includes(searchLower)
+    );
+  });
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
@@ -115,24 +268,67 @@ function ResultsView({ onBack }) {
                 </p>
               </div>
             </div>
-            <div className="text-right flex-shrink-0">
-              <div className="text-2xl md:text-3xl font-bold text-blue-600">
-                {results.length}
+            <div className="flex items-center gap-3">
+              {/* Export to Excel Button */}
+              {results.length > 0 && (
+                <button
+                  onClick={exportToExcel}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-lg md:rounded-xl font-semibold transition-all hover:shadow-lg text-sm md:text-base"
+                  title="Export to Excel"
+                >
+                  <FaFileExcel className="text-lg" />
+                  <span className="hidden sm:inline">Export Excel</span>
+                  <span className="sm:hidden">Excel</span>
+                </button>
+              )}
+              <div className="text-right flex-shrink-0">
+                <div className="text-2xl md:text-3xl font-bold text-blue-600">
+                  {results.length}
+                </div>
+                <div className="text-xs md:text-sm text-gray-500">Total</div>
               </div>
-              <div className="text-xs md:text-sm text-gray-500">Total</div>
             </div>
           </div>
         </div>
 
+        {/* Search Bar */}
+        {results.length > 0 && (
+          <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 mb-5">
+            <div className="relative">
+              <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg" />
+              <input
+                type="text"
+                placeholder="Search by name, test name, or date..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-12 pr-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 text-gray-900 transition-all"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <FaTimes />
+                </button>
+              )}
+            </div>
+            {searchQuery && (
+              <p className="mt-2 text-sm text-gray-600">
+                Found {filteredResults.length} result{filteredResults.length !== 1 ? 's' : ''}
+              </p>
+            )}
+          </div>
+        )}
+
         {/* Results Table */}
-        {results.length === 0 ? (
+        {filteredResults.length === 0 ? (
           <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-8 md:p-12 text-center">
             <FaClipboardList className="text-5xl md:text-6xl text-gray-300 mx-auto mb-4" />
             <h2 className="text-xl md:text-2xl font-bold text-gray-700 mb-2">
-              No Results Yet
+              {searchQuery ? "No Results Found" : "No Results Yet"}
             </h2>
             <p className="text-sm md:text-base text-gray-500">
-              Student test results will appear here
+              {searchQuery ? "Try a different search term" : "Student test results will appear here"}
             </p>
           </div>
         ) : (
@@ -167,7 +363,7 @@ function ResultsView({ onBack }) {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {results.map((result) => (
+                    {filteredResults.map((result) => (
                       <tr
                         key={result._id}
                         className="hover:bg-gray-50 transition-colors"
@@ -215,6 +411,13 @@ function ResultsView({ onBack }) {
                         <td className="px-6 py-4 text-center">
                           <div className="flex items-center justify-center gap-2">
                             <button
+                              onClick={() => exportResultToPDF(result)}
+                              className="p-2 bg-green-100 hover:bg-green-200 text-green-600 rounded-lg transition-colors"
+                              title="Download PDF"
+                            >
+                              <FaFilePdf />
+                            </button>
+                            <button
                               onClick={() => handleViewAnalysis(result)}
                               className="p-2 bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-lg transition-colors"
                               title="View detailed analysis"
@@ -239,7 +442,7 @@ function ResultsView({ onBack }) {
 
             {/* Mobile Card Layout */}
             <div className="md:hidden space-y-4">
-              {results.map((result) => (
+              {filteredResults.map((result) => (
                 <div
                   key={result._id}
                   className="bg-white rounded-xl shadow-lg p-4 border border-gray-200"
@@ -300,13 +503,28 @@ function ResultsView({ onBack }) {
                     </div>
                   </div>
 
-                  <button
-                    onClick={() => handleViewAnalysis(result)}
-                    className="w-full mt-3 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center justify-center gap-2 font-semibold text-sm"
-                  >
-                    <FaChartBar />
-                    View Detailed Analysis
-                  </button>
+                  <div className="flex gap-2 mt-3">
+                    <button
+                      onClick={() => exportResultToPDF(result)}
+                      className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center justify-center gap-2 font-semibold text-sm"
+                    >
+                      <FaFilePdf />
+                      PDF
+                    </button>
+                    <button
+                      onClick={() => handleViewAnalysis(result)}
+                      className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center justify-center gap-2 font-semibold text-sm"
+                    >
+                      <FaChartBar />
+                      Details
+                    </button>
+                    <button
+                      onClick={() => handleDelete(result._id)}
+                      className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors flex items-center justify-center gap-2 font-semibold text-sm"
+                    >
+                      <FaTrash />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
