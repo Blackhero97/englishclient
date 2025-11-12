@@ -146,82 +146,121 @@ function ResultsView({ onBack }) {
   };
 
   const exportResultToPDF = (result) => {
-    const doc = new jsPDF();
-    
-    // Title
-    doc.setFontSize(20);
-    doc.setTextColor(37, 99, 235); // Blue color
-    doc.text("Test Result Certificate", 105, 20, { align: "center" });
-    
-    // Line separator
-    doc.setDrawColor(37, 99, 235);
-    doc.setLineWidth(0.5);
-    doc.line(20, 25, 190, 25);
-    
-    // Student Information
-    doc.setFontSize(12);
-    doc.setTextColor(0, 0, 0);
-    doc.text(`Student Name: ${result.firstName} ${result.lastName}`, 20, 40);
-    doc.text(`Test Name: ${result.testName}`, 20, 50);
-    doc.text(`Date: ${formatDate(result.createdAt)}`, 20, 60);
-    
-    // Results Box
-    doc.setFillColor(239, 246, 255); // Light blue background
-    doc.rect(20, 70, 170, 40, 'F');
-    
-    doc.setFontSize(14);
-    doc.setTextColor(37, 99, 235);
-    doc.text("Test Results", 105, 80, { align: "center" });
-    
-    doc.setFontSize(12);
-    doc.setTextColor(0, 0, 0);
-    doc.text(`Total Questions: ${result.totalQuestions}`, 30, 90);
-    doc.text(`Correct Answers: ${result.correctAnswers}`, 30, 98);
-    doc.text(`Wrong Answers: ${result.wrongAnswers}`, 120, 90);
-    doc.text(`Percentage: ${result.percentage}%`, 120, 98);
-    
-    // Status
-    const status = result.percentage >= 80 ? "Excellent" : result.percentage >= 60 ? "Good" : "Needs Improvement";
-    const statusColor = result.percentage >= 80 ? [34, 197, 94] : result.percentage >= 60 ? [234, 179, 8] : [239, 68, 68];
-    
-    doc.setFontSize(16);
-    doc.setTextColor(...statusColor);
-    doc.text(`Status: ${status}`, 105, 125, { align: "center" });
-    
-    // Detailed answers if available
-    if (result.answers && result.answers.length > 0) {
+    try {
+      const doc = new jsPDF();
+      
+      // Title with background
+      doc.setFillColor(37, 99, 235);
+      doc.rect(0, 0, 210, 30, 'F');
+      
+      doc.setFontSize(22);
+      doc.setTextColor(255, 255, 255);
+      doc.text("Test Result Certificate", 105, 20, { align: "center" });
+      
+      // Student Information Section
+      doc.setFontSize(14);
+      doc.setTextColor(37, 99, 235);
+      doc.text("Student Information", 20, 45);
+      
+      doc.setFontSize(11);
+      doc.setTextColor(0, 0, 0);
+      doc.text(`Name: ${result.firstName} ${result.lastName}`, 20, 55);
+      doc.text(`Test: ${result.testName}`, 20, 62);
+      doc.text(`Date: ${formatDate(result.createdAt)}`, 20, 69);
+      
+      // Results Section
+      doc.setFontSize(14);
+      doc.setTextColor(37, 99, 235);
+      doc.text("Test Results", 20, 85);
+      
+      // Results Box
+      doc.setFillColor(239, 246, 255);
+      doc.roundedRect(20, 90, 170, 50, 3, 3, 'F');
+      
       doc.setFontSize(12);
       doc.setTextColor(0, 0, 0);
-      doc.text("Detailed Answers:", 20, 140);
+      doc.text(`Total Questions: ${result.totalQuestions}`, 30, 100);
+      doc.text(`Correct Answers: ${result.correctAnswers}`, 30, 110);
+      doc.text(`Wrong Answers: ${result.wrongAnswers}`, 30, 120);
+      doc.text(`Score: ${result.percentage}%`, 30, 130);
       
-      const tableData = result.answers.map((answer, index) => {
-        const isCorrect = typeof answer === 'number' ? answer === result.correctAnswers : answer;
-        return [
-          index + 1,
-          isCorrect ? "✓ Correct" : "✗ Wrong"
-        ];
-      });
+      // Status Badge
+      const status = result.percentage >= 80 ? "Excellent ⭐" : 
+                     result.percentage >= 60 ? "Good ✓" : 
+                     "Needs Improvement";
+      const statusBgColor = result.percentage >= 80 ? [34, 197, 94] : 
+                            result.percentage >= 60 ? [234, 179, 8] : 
+                            [239, 68, 68];
       
-      doc.autoTable({
-        startY: 145,
-        head: [['Question #', 'Result']],
-        body: tableData,
-        theme: 'striped',
-        headStyles: { fillColor: [37, 99, 235] },
-        alternateRowStyles: { fillColor: [239, 246, 255] },
-      });
+      doc.setFillColor(...statusBgColor);
+      doc.roundedRect(65, 145, 80, 15, 3, 3, 'F');
+      
+      doc.setFontSize(14);
+      doc.setTextColor(255, 255, 255);
+      doc.text(status, 105, 155, { align: "center" });
+      
+      // Detailed Answers Section
+      if (result.answers && Array.isArray(result.answers) && result.answers.length > 0) {
+        doc.setFontSize(14);
+        doc.setTextColor(37, 99, 235);
+        doc.text("Question-by-Question Analysis", 20, 175);
+        
+        // Create table data
+        const tableData = result.answers.map((answer, index) => {
+          let isCorrect = false;
+          if (typeof answer === 'boolean') {
+            isCorrect = answer;
+          } else if (typeof answer === 'number') {
+            isCorrect = answer === 1;
+          } else if (typeof answer === 'object' && answer !== null) {
+            isCorrect = answer.isCorrect || answer.correct;
+          }
+          
+          return [
+            `Question ${index + 1}`,
+            isCorrect ? "✓ Correct" : "✗ Wrong"
+          ];
+        });
+        
+        // Add table
+        doc.autoTable({
+          startY: 180,
+          head: [['Question', 'Result']],
+          body: tableData,
+          theme: 'grid',
+          headStyles: { 
+            fillColor: [37, 99, 235],
+            fontSize: 11,
+            fontStyle: 'bold'
+          },
+          bodyStyles: {
+            fontSize: 10
+          },
+          alternateRowStyles: { 
+            fillColor: [245, 247, 250] 
+          },
+          margin: { left: 20, right: 20 }
+        });
+      }
+      
+      // Footer
+      const finalY = doc.lastAutoTable ? doc.lastAutoTable.finalY + 20 : 200;
+      doc.setDrawColor(200, 200, 200);
+      doc.line(20, finalY, 190, finalY);
+      
+      doc.setFontSize(9);
+      doc.setTextColor(128, 128, 128);
+      doc.text(`Generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}`, 105, finalY + 7, { align: "center" });
+      doc.text("English Learning Platform - Test Results", 105, finalY + 12, { align: "center" });
+      
+      // Save PDF
+      const fileName = `${result.firstName}_${result.lastName}_${result.testName.replace(/\s+/g, '_')}_Result.pdf`;
+      doc.save(fileName);
+      toast.success("✅ PDF downloaded successfully!");
+    } catch (error) {
+      console.error("PDF Export Error:", error);
+      toast.error("❌ Failed to generate PDF: " + error.message);
     }
-    
-    // Footer
-    const pageCount = doc.internal.getNumberOfPages();
-    doc.setFontSize(10);
-    doc.setTextColor(128, 128, 128);
-    doc.text(`Generated on ${new Date().toLocaleDateString()}`, 105, 280, { align: "center" });
-    
-    // Save PDF
-    const fileName = `${result.firstName}_${result.lastName}_${result.testName.replace(/\s+/g, '_')}_Result.pdf`;
-    doc.save(fileName);
-    toast.success("PDF downloaded successfully!");
   };
 
   // Filter results based on search query

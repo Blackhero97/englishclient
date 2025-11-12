@@ -90,83 +90,94 @@ function LessonDetail() {
   };
 
   const exportLessonToPDF = () => {
-    const doc = new jsPDF();
-    
-    // Add title
-    doc.setFontSize(24);
-    doc.setTextColor(147, 51, 234); // Purple color
-    doc.text(lesson.title, 20, 20);
-    
-    // Add metadata
-    doc.setFontSize(10);
-    doc.setTextColor(128, 128, 128);
-    doc.text(`Level: ${lesson.level} | Category: ${lesson.category}`, 20, 30);
-    doc.text(`Duration: ${lesson.duration}`, 20, 36);
-    
-    // Add line separator
-    doc.setDrawColor(147, 51, 234);
-    doc.setLineWidth(0.5);
-    doc.line(20, 40, 190, 40);
-    
-    // Add description
-    doc.setFontSize(12);
-    doc.setTextColor(0, 0, 0);
-    doc.text("Description:", 20, 50);
-    
-    doc.setFontSize(11);
-    doc.setTextColor(64, 64, 64);
-    const descLines = doc.splitTextToSize(lesson.description, 170);
-    doc.text(descLines, 20, 58);
-    
-    let yPosition = 58 + (descLines.length * 6) + 10;
-    
-    // Add content
-    if (lesson.content) {
+    try {
+      const doc = new jsPDF();
+      
+      // Add title
+      doc.setFontSize(24);
+      doc.setTextColor(147, 51, 234); // Purple color
+      doc.text(lesson.title, 20, 20);
+      
+      // Add metadata
+      doc.setFontSize(10);
+      doc.setTextColor(128, 128, 128);
+      doc.text(`Level: ${lesson.level} | Category: ${lesson.category}`, 20, 30);
+      doc.text(`Duration: ${lesson.duration}`, 20, 36);
+      
+      // Add line separator
+      doc.setDrawColor(147, 51, 234);
+      doc.setLineWidth(0.5);
+      doc.line(20, 40, 190, 40);
+      
+      // Add description
       doc.setFontSize(12);
       doc.setTextColor(0, 0, 0);
-      doc.text("Lesson Content:", 20, yPosition);
-      yPosition += 8;
+      doc.text("Description:", 20, 50);
       
-      // Convert markdown to plain text (simple version)
-      const plainContent = lesson.content
-        .replace(/[#*_`]/g, '')
-        .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
-        .trim();
-      
-      doc.setFontSize(10);
+      doc.setFontSize(11);
       doc.setTextColor(64, 64, 64);
+      const descLines = doc.splitTextToSize(lesson.description, 170);
+      doc.text(descLines, 20, 58);
       
-      const contentLines = doc.splitTextToSize(plainContent, 170);
+      let yPosition = 58 + (descLines.length * 6) + 10;
       
-      // Handle pagination
-      contentLines.forEach((line) => {
-        if (yPosition > 270) {
+      // Add content
+      if (lesson.content) {
+        // Check if we need a new page
+        if (yPosition > 250) {
           doc.addPage();
           yPosition = 20;
         }
-        doc.text(line, 20, yPosition);
-        yPosition += 6;
-      });
+        
+        doc.setFontSize(12);
+        doc.setTextColor(0, 0, 0);
+        doc.text("Lesson Content:", 20, yPosition);
+        yPosition += 8;
+        
+        // Convert markdown to plain text (simple version)
+        const plainContent = lesson.content
+          .replace(/[#*_`]/g, '')
+          .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
+          .trim();
+        
+        doc.setFontSize(10);
+        doc.setTextColor(64, 64, 64);
+        
+        const contentLines = doc.splitTextToSize(plainContent, 170);
+        
+        // Handle pagination
+        contentLines.forEach((line) => {
+          if (yPosition > 270) {
+            doc.addPage();
+            yPosition = 20;
+          }
+          doc.text(line, 20, yPosition);
+          yPosition += 6;
+        });
+      }
+      
+      // Add footer on all pages
+      const pageCount = doc.internal.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setTextColor(128, 128, 128);
+        doc.text(
+          `Page ${i} of ${pageCount} - Downloaded from English Learning Platform`,
+          105,
+          285,
+          { align: "center" }
+        );
+      }
+      
+      // Save PDF
+      const fileName = `${lesson.title.replace(/\s+/g, '_')}_Lesson.pdf`;
+      doc.save(fileName);
+      toast.success("Lesson downloaded as PDF!");
+    } catch (error) {
+      console.error("PDF Export Error:", error);
+      toast.error("Failed to generate PDF: " + error.message);
     }
-    
-    // Add footer on all pages
-    const pageCount = doc.internal.getNumberOfPages();
-    for (let i = 1; i <= pageCount; i++) {
-      doc.setPage(i);
-      doc.setFontSize(8);
-      doc.setTextColor(128, 128, 128);
-      doc.text(
-        `Page ${i} of ${pageCount} - Downloaded from English Learning Platform`,
-        105,
-        285,
-        { align: "center" }
-      );
-    }
-    
-    // Save PDF
-    const fileName = `${lesson.title.replace(/\s+/g, '_')}_Lesson.pdf`;
-    doc.save(fileName);
-    toast.success("Lesson downloaded as PDF!");
   };
 
   if (loading) {
