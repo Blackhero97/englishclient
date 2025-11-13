@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['vite.svg', 'icon-*.png'],
+      includeAssets: ['logoenglish.png', 'vite.svg'],
       manifest: {
         name: 'English Learning Platform',
         short_name: 'English Test',
@@ -21,13 +21,13 @@ export default defineConfig({
         start_url: '/',
         icons: [
           {
-            src: '/icon-192x192.png',
+            src: '/logoenglish.png',
             sizes: '192x192',
             type: 'image/png',
             purpose: 'any maskable'
           },
           {
-            src: '/icon-512x512.png',
+            src: '/logoenglish.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable'
@@ -39,22 +39,22 @@ export default defineConfig({
             name: 'Take Test',
             short_name: 'Test',
             description: 'Start a new English test',
-            url: '/test',
-            icons: [{ src: '/icon-192x192.png', sizes: '192x192' }]
+            url: '/test-selection',
+            icons: [{ src: '/logoenglish.png', sizes: '192x192' }]
           },
           {
             name: 'View Lessons',
             short_name: 'Lessons',
             description: 'Browse English lessons',
             url: '/lessons',
-            icons: [{ src: '/icon-192x192.png', sizes: '192x192' }]
+            icons: [{ src: '/logoenglish.png', sizes: '192x192' }]
           },
           {
             name: 'AI Chatbot',
             short_name: 'Chat',
             description: 'Talk to AI English tutor',
             url: '/chatbot',
-            icons: [{ src: '/icon-192x192.png', sizes: '192x192' }]
+            icons: [{ src: '/logoenglish.png', sizes: '192x192' }]
           }
         ]
       },
