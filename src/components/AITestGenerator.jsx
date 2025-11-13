@@ -7,6 +7,7 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 function AITestGenerator({ onQuestionsGenerated }) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [topic, setTopic] = useState("");
+  const [context, setContext] = useState("");
   const [difficulty, setDifficulty] = useState("intermediate");
   const [questionCount, setQuestionCount] = useState(5);
   const [generatedQuestions, setGeneratedQuestions] = useState([]);
@@ -24,6 +25,7 @@ function AITestGenerator({ onQuestionsGenerated }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           topic: topic,
+          context: context,
           difficulty: difficulty,
           questionCount: questionCount,
         }),
@@ -50,6 +52,7 @@ function AITestGenerator({ onQuestionsGenerated }) {
       onQuestionsGenerated(generatedQuestions);
       setGeneratedQuestions([]);
       setTopic("");
+      setContext("");
       toast.success("Questions added to test!");
     }
   };
@@ -84,6 +87,24 @@ function AITestGenerator({ onQuestionsGenerated }) {
             className="w-full px-4 py-3 bg-white text-gray-900 rounded-xl border-2 border-purple-200 focus:border-purple-500 focus:outline-none transition-colors"
             disabled={isGenerating}
           />
+        </div>
+
+        {/* Context/Material Input */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Context / Study Material (Optional)
+          </label>
+          <textarea
+            value={context}
+            onChange={(e) => setContext(e.target.value)}
+            placeholder="Paste text from book, vocabulary list, or any material to generate questions from&#10;&#10;Examples:&#10;• Book chapter text&#10;• Vocabulary words list&#10;• Grammar rules&#10;• Article or passage"
+            rows="6"
+            className="w-full px-4 py-3 bg-white text-gray-900 rounded-xl border-2 border-purple-200 focus:border-purple-500 focus:outline-none transition-colors resize-none"
+            disabled={isGenerating}
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            💡 Tip: Paste vocabulary words, text passages, or any study material. AI will generate questions based on this content.
+          </p>
         </div>
 
         {/* Difficulty */}
