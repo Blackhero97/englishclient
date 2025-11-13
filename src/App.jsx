@@ -35,13 +35,18 @@ const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || "admin123";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 function getScore(answers, questions) {
+  if (!questions || questions.length === 0) return 0;
+  
+  // Calculate points per question to make total 100
+  const pointsPerQuestion = 100 / questions.length;
+  
   let score = 0;
   for (let i = 0; i < answers.length; i++) {
     if (answers[i] === questions[i]?.answer) {
-      score += 4;
+      score += pointsPerQuestion;
     }
   }
-  return score;
+  return Math.round(score * 100) / 100; // Round to 2 decimal places
 }
 
 function App() {
@@ -1149,10 +1154,10 @@ function App() {
                         </div>
                         <div className="text-center">
                           <div className="text-2xl md:text-3xl font-bold text-gray-900">
-                            {Math.round(score)} / 100
+                            {score.toFixed(1)} / 100
                           </div>
                           <p className="text-gray-500 text-xs mt-1">
-                            Final Score
+                            Final Score ({questions.length} questions)
                           </p>
                         </div>
                       </div>

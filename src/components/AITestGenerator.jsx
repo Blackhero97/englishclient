@@ -106,21 +106,25 @@ function AITestGenerator({ onQuestionsGenerated }) {
         {/* Question Count */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Number of Questions
+            Number of Questions (Total: 100 points)
           </label>
           <input
             type="number"
             value={questionCount}
             onChange={(e) =>
               setQuestionCount(
-                Math.max(1, Math.min(25, parseInt(e.target.value) || 5))
+                Math.max(1, Math.min(50, parseInt(e.target.value) || 5))
               )
             }
             min="1"
-            max="25"
+            max="50"
+            placeholder="Enter number of questions (1-50)"
             className="w-full px-4 py-3 bg-white text-gray-900 rounded-xl border-2 border-purple-200 focus:border-purple-500 focus:outline-none transition-colors"
             disabled={isGenerating}
           />
+          <p className="text-xs text-gray-500 mt-1">
+            Each question worth: {(100 / questionCount).toFixed(2)} points
+          </p>
         </div>
 
         {/* Generate Button */}
