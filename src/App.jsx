@@ -13,6 +13,7 @@ import Dashboard from "./components/Dashboard";
 import LessonsModule from "./components/LessonsModule";
 import LessonDetail from "./components/LessonDetail";
 import Certificate from "./components/Certificate";
+import PWAInstallPrompt from "./components/PWAInstallPrompt";
 import {
   FaClock,
   FaBookmark,
@@ -1465,6 +1466,9 @@ function App() {
           })
         }
       />
+      
+      {/* PWA Install Prompt */}
+      <PWAInstallPrompt />
     </>
   );
 }
