@@ -16,9 +16,14 @@ import {
   FaCheckCircle,
   FaRobot,
   FaEye,
+  FaCertificate,
+  FaMedal,
+  FaDownload,
+  FaAward,
 } from "react-icons/fa";
 import AITestGenerator from "./AITestGenerator";
 import CreateLesson from "./CreateLesson";
+import jsPDF from "jspdf";
 
 function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
   const navigate = useNavigate();
@@ -48,12 +53,21 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
   const [showQuestionForm, setShowQuestionForm] = useState(true);
 
   // Mobile tab state
-  const [adminTab, setAdminTab] = useState("tests"); // tests, questions, ai, lessons
+  const [adminTab, setAdminTab] = useState("tests"); // tests, questions, ai, lessons, certificate
 
   // Lessons state
   const [lessons, setLessons] = useState([]);
   const [showCreateLesson, setShowCreateLesson] = useState(false);
   const [editingLesson, setEditingLesson] = useState(null);
+
+  // Certificate state
+  const [studentName, setStudentName] = useState("");
+  const [courseName, setCourseName] = useState("English Language Course");
+  const [completionDate, setCompletionDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
+  const [grade, setGrade] = useState("Excellent");
+  const [showCertificatePreview, setShowCertificatePreview] = useState(false);
 
   // Pagination for lessons
   const [currentLessonPage, setCurrentLessonPage] = useState(1);
@@ -137,6 +151,204 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
 
   const handleLessonPageChange = (pageNumber) => {
     setCurrentLessonPage(pageNumber);
+  };
+
+  // Certificate PDF Generator with Modern Design
+  const generateCertificatePDF = () => {
+    if (!studentName.trim()) {
+      toast.error("Please enter student name!");
+      return;
+    }
+
+    try {
+      const doc = new jsPDF({
+        orientation: "landscape",
+        unit: "mm",
+        format: "a4",
+      });
+
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+
+      // Use Helvetica font which is closest to Space Grotesk in jsPDF built-in fonts
+      // Set as default font for entire document
+      doc.setFont("helvetica", "normal");
+      
+      // Modern gradient-style background (simulated with rectangles)
+      doc.setFillColor(249, 250, 251);
+      doc.rect(0, 0, pageWidth, pageHeight, "F");
+
+      // Decorative border - Modern style
+      doc.setDrawColor(59, 130, 246); // Blue
+      doc.setLineWidth(3);
+      doc.rect(8, 8, pageWidth - 16, pageHeight - 16);
+
+      doc.setDrawColor(147, 51, 234); // Purple
+      doc.setLineWidth(1);
+      doc.rect(12, 12, pageWidth - 24, pageHeight - 24);
+
+      // Top decorative elements
+      doc.setFillColor(59, 130, 246);
+      doc.circle(pageWidth / 2 - 60, 25, 3, "F");
+      doc.circle(pageWidth / 2 + 60, 25, 3, "F");
+
+      // Certificate of Achievement Title
+      doc.setFontSize(18);
+      doc.setTextColor(107, 114, 128);
+      doc.setFont("helvetica", "normal");
+      // Add letter spacing effect by adding spaces
+      const certText = "C E R T I F I C A T E";
+      doc.text(certText, pageWidth / 2, 35, { align: "center" });
+
+      doc.setFontSize(54);
+      doc.setTextColor(37, 99, 235);
+      doc.setFont("helvetica", "bold");
+      doc.text("of Excellence", pageWidth / 2, 52, { align: "center" });
+
+      // Decorative line
+      doc.setDrawColor(59, 130, 246);
+      doc.setLineWidth(0.5);
+      doc.line(70, 60, pageWidth - 70, 60);
+
+      // Awarded to
+      doc.setFontSize(14);
+      doc.setTextColor(75, 85, 99);
+      doc.setFont("helvetica", "normal");
+      doc.text("This certificate is proudly presented to", pageWidth / 2, 75, {
+        align: "center",
+      });
+
+      // Student Name with underline
+      doc.setFontSize(38);
+      doc.setTextColor(30, 58, 138);
+      doc.setFont("helvetica", "bold");
+      doc.text(studentName, pageWidth / 2, 92, { align: "center" });
+
+      // Underline for name
+      const nameWidth = doc.getTextWidth(studentName);
+      doc.setDrawColor(59, 130, 246);
+      doc.setLineWidth(0.8);
+      doc.line(
+        pageWidth / 2 - nameWidth / 2 - 5,
+        95,
+        pageWidth / 2 + nameWidth / 2 + 5,
+        95
+      );
+
+      // Achievement text
+      doc.setFontSize(13);
+      doc.setTextColor(75, 85, 99);
+      doc.setFont("helvetica", "normal");
+      doc.text(
+        "for successfully completing the comprehensive",
+        pageWidth / 2,
+        108,
+        { align: "center" }
+      );
+
+      // Course name
+      doc.setFontSize(24);
+      doc.setTextColor(147, 51, 234);
+      doc.setFont("helvetica", "bold");
+      doc.text(courseName, pageWidth / 2, 122, { align: "center" });
+
+      // Performance badge
+      doc.setFontSize(13);
+      doc.setTextColor(75, 85, 99);
+      doc.setFont("helvetica", "normal");
+      doc.text(
+        `demonstrating ${grade} performance throughout the course`,
+        pageWidth / 2,
+        135,
+        { align: "center" }
+      );
+
+      // Date
+      doc.setFontSize(12);
+      doc.setTextColor(107, 114, 128);
+      doc.setFont("helvetica", "normal");
+      const dateStr = new Date(completionDate).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+      doc.text(`Date of Completion: ${dateStr}`, pageWidth / 2, 148, {
+        align: "center",
+      });
+
+      // Signature section
+      const signatureY = 168;
+
+      // Left signature (Teacher)
+      doc.setDrawColor(107, 114, 128);
+      doc.line(40, signatureY, 95, signatureY);
+      doc.setFontSize(12);
+      doc.setTextColor(75, 85, 99);
+      doc.setFont("helvetica", "bold");
+      doc.text("Miss Nora", 67.5, signatureY - 8, { align: "center" });
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      doc.text("English Teacher", 67.5, signatureY + 6, { align: "center" });
+
+      // Center seal
+      doc.setDrawColor(234, 179, 8);
+      doc.setFillColor(254, 249, 195);
+      doc.setLineWidth(2);
+      doc.circle(pageWidth / 2, signatureY, 18, "FD");
+
+      doc.setDrawColor(234, 179, 8);
+      doc.setLineWidth(1);
+      doc.circle(pageWidth / 2, signatureY, 14, "D");
+
+      doc.setFontSize(11);
+      doc.setTextColor(161, 98, 7);
+      doc.setFont("helvetica", "bold");
+      doc.text("VERIFIED", pageWidth / 2, signatureY - 2, { align: "center" });
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "normal");
+      doc.text("CERTIFICATE", pageWidth / 2, signatureY + 4, {
+        align: "center",
+      });
+
+      // Right signature (Director)
+      doc.setDrawColor(107, 114, 128);
+      doc.line(pageWidth - 95, signatureY, pageWidth - 40, signatureY);
+      doc.setFontSize(12);
+      doc.setTextColor(75, 85, 99);
+      doc.setFont("helvetica", "bold");
+      doc.text("N. Hasanboy", pageWidth - 67.5, signatureY - 8, {
+        align: "center",
+      });
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      doc.text("Program Director", pageWidth - 67.5, signatureY + 6, {
+        align: "center",
+      });
+
+      // Footer
+      doc.setFontSize(10);
+      doc.setTextColor(156, 163, 175);
+      doc.setFont("helvetica", "normal");
+      doc.text(
+        "English Learning Platform - Empowering Language Excellence Since 2024",
+        pageWidth / 2,
+        pageHeight - 12,
+        { align: "center" }
+      );
+
+      // Bottom decorative elements
+      doc.setFillColor(147, 51, 234);
+      doc.circle(pageWidth / 2 - 60, pageHeight - 18, 2, "F");
+      doc.circle(pageWidth / 2 + 60, pageHeight - 18, 2, "F");
+
+      // Save PDF
+      const fileName = `${studentName.replace(/\s+/g, "_")}_Certificate.pdf`;
+      doc.save(fileName);
+      toast.success("🎉 Certificate generated successfully!");
+    } catch (error) {
+      console.error("PDF Generation Error:", error);
+      toast.error("Failed to generate certificate: " + error.message);
+    }
   };
 
   // Save test helper function
@@ -431,6 +643,19 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                 }`}
               >
                 📖 Lessons
+              </button>
+              <button
+                onClick={() => {
+                  setAdminTab("certificate");
+                  setEditingTest(null);
+                }}
+                className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all ${
+                  adminTab === "certificate"
+                    ? "bg-white text-indigo-600 shadow-md"
+                    : "text-white/80 hover:bg-white/10"
+                }`}
+              >
+                🎓 Certificate
               </button>
             </div>
 
@@ -1203,6 +1428,180 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                   </button>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Certificate Generator Section */}
+          {adminTab === "certificate" && (
+            <div className="lg:col-span-12 bg-white rounded-xl shadow-lg border border-gray-100 p-6">
+              <div className="grid lg:grid-cols-2 gap-8">
+                {/* Form Section */}
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                    <FaCertificate className="text-yellow-500" />
+                    Certificate Generator
+                  </h2>
+
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Student Name *
+                      </label>
+                      <input
+                        type="text"
+                        value={studentName}
+                        onChange={(e) => setStudentName(e.target.value)}
+                        placeholder="Enter student full name"
+                        className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 text-gray-900"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Course Name
+                      </label>
+                      <input
+                        type="text"
+                        value={courseName}
+                        onChange={(e) => setCourseName(e.target.value)}
+                        placeholder="Enter course name"
+                        className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 text-gray-900"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Performance Level
+                      </label>
+                      <select
+                        value={grade}
+                        onChange={(e) => setGrade(e.target.value)}
+                        className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 text-gray-900"
+                      >
+                        <option value="Outstanding">Outstanding ⭐⭐⭐⭐⭐</option>
+                        <option value="Excellent">Excellent ⭐⭐⭐⭐</option>
+                        <option value="Very Good">Very Good ⭐⭐⭐</option>
+                        <option value="Good">Good ⭐⭐</option>
+                        <option value="Satisfactory">Satisfactory ⭐</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Completion Date
+                      </label>
+                      <input
+                        type="date"
+                        value={completionDate}
+                        onChange={(e) => setCompletionDate(e.target.value)}
+                        className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 text-gray-900"
+                      />
+                    </div>
+
+                    <div className="flex gap-3 pt-4">
+                      <button
+                        onClick={() => setShowCertificatePreview(!showCertificatePreview)}
+                        className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-xl transition-all shadow-md hover:shadow-lg"
+                      >
+                        <FaAward />
+                        {showCertificatePreview ? "Hide" : "Show"} Preview
+                      </button>
+                      <button
+                        onClick={generateCertificatePDF}
+                        className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold rounded-xl transition-all shadow-md hover:shadow-lg"
+                      >
+                        <FaDownload />
+                        Download PDF
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Preview Section */}
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                    <FaMedal className="text-yellow-500" />
+                    Live Preview
+                  </h2>
+
+                  {showCertificatePreview && studentName ? (
+                    <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 border-4 border-blue-500 rounded-lg shadow-2xl p-8 relative min-h-[500px]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                      {/* Decorative corners */}
+                      <div className="absolute top-0 left-0 w-20 h-20 border-t-4 border-l-4 border-purple-500"></div>
+                      <div className="absolute top-0 right-0 w-20 h-20 border-t-4 border-r-4 border-purple-500"></div>
+                      <div className="absolute bottom-0 left-0 w-20 h-20 border-b-4 border-l-4 border-purple-500"></div>
+                      <div className="absolute bottom-0 right-0 w-20 h-20 border-b-4 border-r-4 border-purple-500"></div>
+
+                      {/* Content */}
+                      <div className="relative z-10 h-full flex flex-col items-center justify-center text-center space-y-4">
+                        <p className="text-sm text-gray-500 uppercase tracking-widest font-medium">Certificate</p>
+                        <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent tracking-tight">
+                          of Excellence
+                        </h1>
+
+                        <div className="w-40 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent my-2"></div>
+
+                        <p className="text-sm text-gray-600 italic mt-4 font-light">Presented to</p>
+
+                        <h2 className="text-4xl font-bold text-blue-900 px-4 py-2 tracking-wide">
+                          {studentName}
+                        </h2>
+
+                        <p className="text-sm text-gray-600 mt-3 font-light">
+                          for successfully completing the
+                        </p>
+
+                        <h3 className="text-2xl font-bold text-purple-600 py-2 tracking-wide">
+                          {courseName}
+                        </h3>
+
+                        <p className="text-sm text-gray-600 mt-3 font-light">
+                          with <span className="font-semibold text-gray-800">{grade}</span> performance
+                        </p>
+
+                        <div className="w-40 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent my-3"></div>
+
+                        <p className="text-sm text-gray-500 mt-4 mb-6 font-medium">
+                          {new Date(completionDate).toLocaleDateString("en-US", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })}
+                        </p>
+
+                        <div className="flex justify-between w-full pt-6 px-8 mt-6">
+                          <div className="text-center">
+                            <div className="w-28 h-0.5 bg-gray-400 mb-2"></div>
+                            <p className="text-xs font-semibold text-gray-700 tracking-wide">Miss Nora</p>
+                            <p className="text-[10px] text-gray-500 font-light">Teacher</p>
+                          </div>
+                          <div className="flex items-center justify-center">
+                            <div className="w-16 h-16 rounded-full border-3 border-yellow-500 bg-yellow-50 flex items-center justify-center shadow-lg">
+                              <FaAward className="text-yellow-600 text-2xl" />
+                            </div>
+                          </div>
+                          <div className="text-center">
+                            <div className="w-28 h-0.5 bg-gray-400 mb-2"></div>
+                            <p className="text-xs font-semibold text-gray-700 tracking-wide">N. Hasanboy</p>
+                            <p className="text-[10px] text-gray-500 font-light">Director</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center min-h-[500px]">
+                      <div className="text-center text-gray-400">
+                        <FaCertificate className="text-6xl mx-auto mb-4 opacity-50" />
+                        <p className="text-lg font-medium">
+                          {studentName
+                            ? "Click 'Show Preview'"
+                            : "Enter student name to see preview"}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           )}
         </div>

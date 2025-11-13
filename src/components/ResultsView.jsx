@@ -15,7 +15,7 @@ import {
 import { toast } from "react-toastify";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
-import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
@@ -222,8 +222,8 @@ function ResultsView({ onBack }) {
           ];
         });
         
-        // Add table
-        doc.autoTable({
+        // Add table using autoTable
+        autoTable(doc, {
           startY: 180,
           head: [['Question', 'Result']],
           body: tableData,

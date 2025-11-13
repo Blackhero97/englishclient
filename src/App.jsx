@@ -12,6 +12,7 @@ import DetailedResults from "./components/DetailedResults";
 import Dashboard from "./components/Dashboard";
 import LessonsModule from "./components/LessonsModule";
 import LessonDetail from "./components/LessonDetail";
+import Certificate from "./components/Certificate";
 import {
   FaClock,
   FaBookmark,
@@ -564,6 +565,13 @@ function App() {
           path="/lessons/:id"
           element={
             <LessonDetail />
+          }
+        />
+
+        <Route
+          path="/certificate"
+          element={
+            <Certificate />
           }
         />
 

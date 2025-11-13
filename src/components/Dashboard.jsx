@@ -204,7 +204,7 @@ function Dashboard({ user, onUserLogin }) {
             {/* Admin Panel Card */}
             <button
               onClick={() => navigate("/admin")}
-              className="group relative overflow-hidden bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-8 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 text-left sm:col-span-2 lg:col-span-1"
+              className="group relative overflow-hidden bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-8 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 text-left"
             >
               <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-white/10 rounded-full -mr-12 sm:-mr-16 -mt-12 sm:-mt-16"></div>
               <div className="absolute bottom-0 left-0 w-20 h-20 sm:w-24 sm:h-24 bg-white/5 rounded-full -ml-10 sm:-ml-12 -mb-10 sm:-mb-12"></div>
@@ -249,7 +249,7 @@ function Dashboard({ user, onUserLogin }) {
                 </div>
 
                 <div className="flex items-center text-white font-semibold gap-2">
-                  <span className="text-sm sm:text-base">Access Panel</span>
+                  <span className="text-sm sm:text-base">Admin Access</span>
                   <span className="text-lg sm:text-xl group-hover:translate-x-2 transition-transform">
                     →
                   </span>
