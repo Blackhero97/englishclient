@@ -678,10 +678,10 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
           </div>
 
           {/* Mobile Tabs */}
-          <div className="lg:hidden mt-4 flex gap-2 bg-white/10 backdrop-blur-sm rounded-xl p-1.5">
+          <div className="lg:hidden mt-4 flex flex-wrap gap-2 bg-white/10 backdrop-blur-sm rounded-xl p-1.5">
             <button
               onClick={() => setAdminTab("tests")}
-              className={`flex-1 py-2.5 rounded-lg font-semibold text-xs transition-all ${
+              className={`flex-1 min-w-[70px] py-2.5 rounded-lg font-semibold text-xs transition-all ${
                 adminTab === "tests"
                   ? "bg-white text-indigo-600 shadow-md"
                   : "text-white/80 hover:bg-white/10"
@@ -692,10 +692,10 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
             <button
               onClick={() => {
                 setAdminTab("lessons");
-                setEditingTest(null); // Clear editing test when switching to lessons
-                fetchLessons(); // Refresh lessons when tab is clicked
+                setEditingTest(null);
+                fetchLessons();
               }}
-              className={`flex-1 py-2.5 rounded-lg font-semibold text-xs transition-all ${
+              className={`flex-1 min-w-[70px] py-2.5 rounded-lg font-semibold text-xs transition-all ${
                 adminTab === "lessons"
                   ? "bg-white text-indigo-600 shadow-md"
                   : "text-white/80 hover:bg-white/10"
@@ -704,8 +704,18 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
               📖 Lessons
             </button>
             <button
+              onClick={() => setAdminTab("certificate")}
+              className={`flex-1 min-w-[70px] py-2.5 rounded-lg font-semibold text-xs transition-all ${
+                adminTab === "certificate"
+                  ? "bg-white text-indigo-600 shadow-md"
+                  : "text-white/80 hover:bg-white/10"
+              }`}
+            >
+              🎓 Certificate
+            </button>
+            <button
               onClick={() => setAdminTab("questions")}
-              className={`flex-1 py-2.5 rounded-lg font-semibold text-xs transition-all ${
+              className={`flex-1 min-w-[70px] py-2.5 rounded-lg font-semibold text-xs transition-all ${
                 adminTab === "questions"
                   ? "bg-white text-indigo-600 shadow-md"
                   : "text-white/80 hover:bg-white/10"
@@ -716,7 +726,7 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
             </button>
             <button
               onClick={() => setAdminTab("ai")}
-              className={`flex-1 py-2.5 rounded-lg font-semibold text-xs transition-all ${
+              className={`flex-1 min-w-[70px] py-2.5 rounded-lg font-semibold text-xs transition-all ${
                 adminTab === "ai"
                   ? "bg-white text-indigo-600 shadow-md"
                   : "text-white/80 hover:bg-white/10"
@@ -1433,12 +1443,12 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
 
           {/* Certificate Generator Section */}
           {adminTab === "certificate" && (
-            <div className="lg:col-span-12 bg-white rounded-xl shadow-lg border border-gray-100 p-6">
-              <div className="grid lg:grid-cols-2 gap-8">
+            <div className="lg:col-span-12 bg-white rounded-xl shadow-lg border border-gray-100 p-4 md:p-6">
+              <div className="grid lg:grid-cols-2 gap-6 md:gap-8">
                 {/* Form Section */}
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                    <FaCertificate className="text-yellow-500" />
+                  <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6 flex items-center gap-2">
+                    <FaCertificate className="text-yellow-500 text-lg md:text-xl" />
                     Certificate Generator
                   </h2>
 
@@ -1498,17 +1508,18 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                       />
                     </div>
 
-                    <div className="flex gap-3 pt-4">
+                    <div className="flex flex-col sm:flex-row gap-3 pt-4">
                       <button
                         onClick={() => setShowCertificatePreview(!showCertificatePreview)}
-                        className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-xl transition-all shadow-md hover:shadow-lg"
+                        className="flex-1 flex items-center justify-center gap-2 px-4 sm:px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-xl transition-all shadow-md hover:shadow-lg text-sm sm:text-base"
                       >
                         <FaAward />
-                        {showCertificatePreview ? "Hide" : "Show"} Preview
+                        <span className="hidden sm:inline">{showCertificatePreview ? "Hide" : "Show"} Preview</span>
+                        <span className="sm:hidden">{showCertificatePreview ? "Hide" : "Preview"}</span>
                       </button>
                       <button
                         onClick={generateCertificatePDF}
-                        className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold rounded-xl transition-all shadow-md hover:shadow-lg"
+                        className="flex-1 flex items-center justify-center gap-2 px-4 sm:px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold rounded-xl transition-all shadow-md hover:shadow-lg text-sm sm:text-base"
                       >
                         <FaDownload />
                         Download PDF
@@ -1519,49 +1530,49 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
 
                 {/* Preview Section */}
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                    <FaMedal className="text-yellow-500" />
+                  <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6 flex items-center gap-2">
+                    <FaMedal className="text-yellow-500 text-lg md:text-xl" />
                     Live Preview
                   </h2>
 
                   {showCertificatePreview && studentName ? (
-                    <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 border-4 border-blue-500 rounded-lg shadow-2xl p-8 relative min-h-[500px]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                    <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 border-2 md:border-4 border-blue-500 rounded-lg shadow-2xl p-4 md:p-8 relative min-h-[300px] md:min-h-[500px]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
                       {/* Decorative corners */}
-                      <div className="absolute top-0 left-0 w-20 h-20 border-t-4 border-l-4 border-purple-500"></div>
-                      <div className="absolute top-0 right-0 w-20 h-20 border-t-4 border-r-4 border-purple-500"></div>
-                      <div className="absolute bottom-0 left-0 w-20 h-20 border-b-4 border-l-4 border-purple-500"></div>
-                      <div className="absolute bottom-0 right-0 w-20 h-20 border-b-4 border-r-4 border-purple-500"></div>
+                      <div className="absolute top-0 left-0 w-12 h-12 md:w-20 md:h-20 border-t-2 md:border-t-4 border-l-2 md:border-l-4 border-purple-500"></div>
+                      <div className="absolute top-0 right-0 w-12 h-12 md:w-20 md:h-20 border-t-2 md:border-t-4 border-r-2 md:border-r-4 border-purple-500"></div>
+                      <div className="absolute bottom-0 left-0 w-12 h-12 md:w-20 md:h-20 border-b-2 md:border-b-4 border-l-2 md:border-l-4 border-purple-500"></div>
+                      <div className="absolute bottom-0 right-0 w-12 h-12 md:w-20 md:h-20 border-b-2 md:border-b-4 border-r-2 md:border-r-4 border-purple-500"></div>
 
                       {/* Content */}
-                      <div className="relative z-10 h-full flex flex-col items-center justify-center text-center space-y-4">
-                        <p className="text-sm text-gray-500 uppercase tracking-widest font-medium">Certificate</p>
-                        <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent tracking-tight">
+                      <div className="relative z-10 h-full flex flex-col items-center justify-center text-center space-y-2 md:space-y-4">
+                        <p className="text-xs md:text-sm text-gray-500 uppercase tracking-widest font-medium">Certificate</p>
+                        <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent tracking-tight">
                           of Excellence
                         </h1>
 
-                        <div className="w-40 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent my-2"></div>
+                        <div className="w-24 md:w-40 h-0.5 md:h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent my-1 md:my-2"></div>
 
-                        <p className="text-sm text-gray-600 italic mt-4 font-light">Presented to</p>
+                        <p className="text-xs md:text-sm text-gray-600 italic mt-2 md:mt-4 font-light">Presented to</p>
 
-                        <h2 className="text-4xl font-bold text-blue-900 px-4 py-2 tracking-wide">
+                        <h2 className="text-xl md:text-3xl lg:text-4xl font-bold text-blue-900 px-2 md:px-4 py-1 md:py-2 tracking-wide">
                           {studentName}
                         </h2>
 
-                        <p className="text-sm text-gray-600 mt-3 font-light">
+                        <p className="text-xs md:text-sm text-gray-600 mt-2 md:mt-3 font-light">
                           for successfully completing the
                         </p>
 
-                        <h3 className="text-2xl font-bold text-purple-600 py-2 tracking-wide">
+                        <h3 className="text-base md:text-xl lg:text-2xl font-bold text-purple-600 py-1 md:py-2 tracking-wide">
                           {courseName}
                         </h3>
 
-                        <p className="text-sm text-gray-600 mt-3 font-light">
+                        <p className="text-xs md:text-sm text-gray-600 mt-2 md:mt-3 font-light">
                           with <span className="font-semibold text-gray-800">{grade}</span> performance
                         </p>
 
-                        <div className="w-40 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent my-3"></div>
+                        <div className="w-24 md:w-40 h-0.5 md:h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent my-2 md:my-3"></div>
 
-                        <p className="text-sm text-gray-500 mt-4 mb-6 font-medium">
+                        <p className="text-xs md:text-sm text-gray-500 mt-2 md:mt-4 mb-3 md:mb-6 font-medium">
                           {new Date(completionDate).toLocaleDateString("en-US", {
                             year: "numeric",
                             month: "long",
@@ -1569,30 +1580,30 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                           })}
                         </p>
 
-                        <div className="flex justify-between w-full pt-6 px-8 mt-6">
+                        <div className="flex justify-between w-full pt-3 md:pt-6 px-4 md:px-8 mt-3 md:mt-6">
                           <div className="text-center">
-                            <div className="w-28 h-0.5 bg-gray-400 mb-2"></div>
-                            <p className="text-xs font-semibold text-gray-700 tracking-wide">Miss Nora</p>
-                            <p className="text-[10px] text-gray-500 font-light">Teacher</p>
+                            <div className="w-16 md:w-28 h-0.5 bg-gray-400 mb-1 md:mb-2"></div>
+                            <p className="text-[10px] md:text-xs font-semibold text-gray-700 tracking-wide">Miss Nora</p>
+                            <p className="text-[8px] md:text-[10px] text-gray-500 font-light">Teacher</p>
                           </div>
                           <div className="flex items-center justify-center">
-                            <div className="w-16 h-16 rounded-full border-3 border-yellow-500 bg-yellow-50 flex items-center justify-center shadow-lg">
-                              <FaAward className="text-yellow-600 text-2xl" />
+                            <div className="w-10 h-10 md:w-16 md:h-16 rounded-full border-2 md:border-3 border-yellow-500 bg-yellow-50 flex items-center justify-center shadow-lg">
+                              <FaAward className="text-yellow-600 text-base md:text-2xl" />
                             </div>
                           </div>
                           <div className="text-center">
-                            <div className="w-28 h-0.5 bg-gray-400 mb-2"></div>
-                            <p className="text-xs font-semibold text-gray-700 tracking-wide">N. Hasanboy</p>
-                            <p className="text-[10px] text-gray-500 font-light">Director</p>
+                            <div className="w-16 md:w-28 h-0.5 bg-gray-400 mb-1 md:mb-2"></div>
+                            <p className="text-[10px] md:text-xs font-semibold text-gray-700 tracking-wide">N. Hasanboy</p>
+                            <p className="text-[8px] md:text-[10px] text-gray-500 font-light">Director</p>
                           </div>
                         </div>
                       </div>
                     </div>
                   ) : (
-                    <div className="bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center min-h-[500px]">
+                    <div className="bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center min-h-[300px] md:min-h-[500px]">
                       <div className="text-center text-gray-400">
-                        <FaCertificate className="text-6xl mx-auto mb-4 opacity-50" />
-                        <p className="text-lg font-medium">
+                        <FaCertificate className="text-4xl md:text-6xl mx-auto mb-3 md:mb-4 opacity-50" />
+                        <p className="text-sm md:text-lg font-medium px-4">
                           {studentName
                             ? "Click 'Show Preview'"
                             : "Enter student name to see preview"}
