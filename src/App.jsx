@@ -43,7 +43,11 @@ function getScore(answers, questions) {
   
   let score = 0;
   for (let i = 0; i < answers.length; i++) {
-    if (answers[i] === questions[i]?.answer) {
+    const question = questions[i];
+    const studentAnswer = answers[i];
+    
+    // To'g'ri javobni tekshirish - question.answer to'g'ri javob indeksi
+    if (studentAnswer !== null && studentAnswer === question?.answer) {
       score += pointsPerQuestion;
     }
   }
@@ -299,7 +303,14 @@ function App() {
 
   // Shuffle questions using Fisher-Yates algorithm - har bir o'quvchi uchun har hil tartib
   const shuffleQuestions = (questions) => {
-    const shuffled = [...questions];
+    // Har bir savolga ID qo'shish (agar yo'q bo'lsa)
+    const questionsWithIds = questions.map((q, index) => ({
+      ...q,
+      originalId: q.id || `q_${index}_${Date.now()}`
+    }));
+    
+    // Aralashtiرish
+    const shuffled = [...questionsWithIds];
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
