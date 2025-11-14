@@ -622,7 +622,7 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
             <div className="hidden lg:flex gap-2 bg-white/10 backdrop-blur-sm rounded-xl p-1.5">
               <button
                 onClick={() => setAdminTab("tests")}
-                className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all ${
+                className={`px-3 sm:px-4 md:px-5 lg:px-6 py-2 sm:py-2.5 rounded-lg font-semibold text-xs sm:text-sm transition-all ${
                   adminTab === "tests"
                     ? "bg-white text-indigo-600 shadow-md"
                     : "text-white/80 hover:bg-white/10"
@@ -636,7 +636,7 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                   setEditingTest(null);
                   fetchLessons(); // Refresh lessons when tab is clicked
                 }}
-                className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all ${
+                className={`px-3 sm:px-4 md:px-5 lg:px-6 py-2 sm:py-2.5 rounded-lg font-semibold text-xs sm:text-sm transition-all ${
                   adminTab === "lessons"
                     ? "bg-white text-indigo-600 shadow-md"
                     : "text-white/80 hover:bg-white/10"
@@ -649,7 +649,7 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                   setAdminTab("certificate");
                   setEditingTest(null);
                 }}
-                className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all ${
+                className={`px-3 sm:px-4 md:px-5 lg:px-6 py-2 sm:py-2.5 rounded-lg font-semibold text-xs sm:text-sm transition-all ${
                   adminTab === "certificate"
                     ? "bg-white text-indigo-600 shadow-md"
                     : "text-white/80 hover:bg-white/10"
@@ -916,24 +916,24 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
             >
               <div className="flex justify-between items-start p-4 md:p-5 border-b border-gray-200">
                 <div className="flex-1 min-w-0">
-                  <h2 className="text-base md:text-xl font-bold text-gray-900 mb-1 flex items-center gap-2">
-                    <div className="w-7 h-7 md:w-9 md:h-9 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center shadow-md flex-shrink-0">
-                      <FaQuestionCircle className="text-white text-xs md:text-sm" />
+                  <h2 className="text-sm sm:text-base md:text-xl font-bold text-gray-900 mb-1 flex items-center gap-1.5 sm:gap-2">
+                    <div className="w-6 h-6 sm:w-7 sm:h-7 md:w-9 md:h-9 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center shadow-md flex-shrink-0">
+                      <FaQuestionCircle className="text-white text-[10px] sm:text-xs md:text-sm" />
                     </div>
-                    <span className="truncate text-sm md:text-base">
+                    <span className="truncate text-xs sm:text-sm md:text-base">
                       {editingTest.name}
                     </span>
                   </h2>
-                  <p className="text-xs text-gray-500 ml-9 md:ml-11">
+                  <p className="text-[10px] sm:text-xs text-gray-500 ml-7 sm:ml-9 md:ml-11">
                     {editingTest.questions.length} questions •{" "}
                     {editingTest.duration} min
                   </p>
                 </div>
-                <div className="text-right">
-                  <div className="text-2xl font-bold text-blue-600">
+                <div className="text-right flex-shrink-0">
+                  <div className="text-lg sm:text-xl md:text-2xl font-bold text-blue-600">
                     {editingTest.questions.length}
                   </div>
-                  <div className="text-xs text-gray-500">Total Questions</div>
+                  <div className="text-[9px] sm:text-xs text-gray-500 whitespace-nowrap">Total</div>
                 </div>
               </div>
 
@@ -955,76 +955,78 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                       <div className="flex justify-between items-center mb-3">
                         <button
                           onClick={() => setShowAIGenerator(!showAIGenerator)}
-                          className="px-3 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-semibold text-sm transition-all hover:shadow-lg flex items-center gap-2"
+                          className="px-2 sm:px-3 py-1.5 sm:py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-semibold text-[10px] sm:text-xs md:text-sm transition-all hover:shadow-lg flex items-center gap-1 sm:gap-2"
                         >
-                          <FaRobot />
-                          {showAIGenerator
+                          <FaRobot className="text-xs sm:text-sm" />
+                          <span className="hidden sm:inline">{showAIGenerator
                             ? "Hide AI Generator"
-                            : "Generate with AI"}
+                            : "Generate with AI"}</span>
+                          <span className="sm:hidden">AI</span>
                         </button>
-                        <h3 className="text-base font-bold text-gray-800 flex items-center gap-2">
-                          <FaListOl className="text-purple-600 text-sm" />
-                          Questions List
+                        <h3 className="text-xs sm:text-sm md:text-base font-bold text-gray-800 flex items-center gap-1 sm:gap-2">
+                          <FaListOl className="text-purple-600 text-[10px] sm:text-xs md:text-sm" />
+                          <span className="hidden sm:inline">Questions List</span>
+                          <span className="sm:hidden">Questions</span>
                         </h3>
-                        <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full font-semibold">
-                          {editingTest.questions.length} total
+                        <span className="text-[9px] sm:text-xs bg-purple-100 text-purple-700 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full font-semibold">
+                          {editingTest.questions.length}
                         </span>
                       </div>
-                    <div className="space-y-2 max-h-[calc(100vh-350px)] overflow-y-auto pr-2">
+                    <div className="space-y-1.5 sm:space-y-2 max-h-[calc(100vh-350px)] overflow-y-auto pr-1 sm:pr-2">
                       {editingTest.questions.length === 0 && (
-                        <div className="text-center py-8 text-gray-400 bg-gray-50 rounded-lg border border-dashed border-gray-300">
-                          <FaQuestionCircle className="text-3xl mx-auto mb-2 opacity-50" />
-                          <p className="text-xs">No questions added yet</p>
+                        <div className="text-center py-4 sm:py-6 md:py-8 text-gray-400 bg-gray-50 rounded-lg border border-dashed border-gray-300">
+                          <FaQuestionCircle className="text-xl sm:text-2xl md:text-3xl mx-auto mb-2 opacity-50" />
+                          <p className="text-[10px] sm:text-xs">No questions added yet</p>
                         </div>
                       )}
                       {editingTest.questions.map((q, index) => (
                         <div
                           key={q.id}
-                          className="group p-3 bg-gradient-to-r from-gray-50 to-white rounded-lg border border-gray-200 hover:border-purple-300 hover:shadow-sm transition-all"
+                          className="group p-2 sm:p-2.5 md:p-3 bg-gradient-to-r from-gray-50 to-white rounded-lg border border-gray-200 hover:border-purple-300 hover:shadow-sm transition-all"
                         >
-                          <div className="flex justify-between items-start mb-2">
-                            <span className="flex items-center gap-1.5 font-bold text-purple-600 text-xs">
-                              <span className="w-5 h-5 bg-purple-100 rounded flex items-center justify-center">
+                          <div className="flex justify-between items-start mb-1 sm:mb-1.5 md:mb-2">
+                            <span className="flex items-center gap-1 sm:gap-1.5 font-bold text-purple-600 text-[10px] sm:text-xs">
+                              <span className="w-4 h-4 sm:w-5 sm:h-5 bg-purple-100 rounded flex items-center justify-center text-[9px] sm:text-[10px]">
                                 {index + 1}
                               </span>
                             </span>
-                            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="flex gap-0.5 sm:gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                               <button
                                 onClick={() => handleEditQuestion(q)}
-                                className="p-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 transition-all"
+                                className="p-1 sm:p-1.5 rounded-md sm:rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 transition-all"
                                 title="Edit Question"
                               >
-                                <FaEdit className="text-xs" />
+                                <FaEdit className="text-[10px] sm:text-xs" />
                               </button>
                               <button
                                 onClick={() => handleDeleteQuestion(q.id)}
-                                className="p-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition-all"
+                                className="p-1 sm:p-1.5 rounded-md sm:rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition-all"
                                 title="Delete Question"
                               >
-                                <FaTrash className="text-xs" />
+                                <FaTrash className="text-[10px] sm:text-xs" />
                               </button>
                             </div>
                           </div>
-                          <p className="text-xs text-gray-900 font-medium mb-2 line-clamp-2">
+                          <p className="text-[10px] sm:text-xs text-gray-900 font-medium mb-1 sm:mb-1.5 md:mb-2 line-clamp-2">
                             {q.question}
                           </p>
-                          <div className="space-y-1">
+                          <div className="space-y-0.5 sm:space-y-1">
                             {q.options.map((opt, i) => (
                               <div
                                 key={i}
-                                className={`text-xs px-2 py-1 rounded flex items-center gap-1.5 ${
+                                className={`text-[9px] sm:text-[10px] md:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded flex items-center gap-1 sm:gap-1.5 ${
                                   i === q.answer
                                     ? "bg-green-50 text-green-700 font-semibold border border-green-300"
                                     : "bg-white text-gray-500 border border-gray-200"
                                 }`}
                               >
                                 {i === q.answer && (
-                                  <FaCheckCircle className="text-green-600 flex-shrink-0" />
+                                  <FaCheckCircle className="text-green-600 flex-shrink-0 text-[8px] sm:text-[10px]" />
                                 )}
-                                <span className="font-bold mr-1">
+                                <span className="font-bold mr-0.5 sm:mr-1">
                                   {String.fromCharCode(65 + i)})
                                 </span>
-                                <span className="flex-1">{opt}</span>
+                                <span className="flex-1 truncate">{opt}</span>
                               </div>
                             ))}
                           </div>
@@ -1199,30 +1201,30 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                   New Lesson
                 </button>
               </div>
-              <div className="space-y-3 mb-4">
+              <div className="space-y-2 sm:space-y-2.5 md:space-y-3 mb-4">
                 {lessons.length === 0 ? (
-                  <p className="text-gray-500 text-center py-8">
+                  <p className="text-gray-500 text-center py-4 sm:py-6 md:py-8 text-xs sm:text-sm">
                     No lessons yet. Create your first lesson!
                   </p>
                 ) : (
                   currentLessons.map((lesson) => (
                     <div
                       key={lesson.id}
-                      className="bg-gray-50 rounded-lg p-4 border border-gray-200"
+                      className="bg-gray-50 rounded-lg p-2.5 sm:p-3 md:p-4 border border-gray-200"
                     >
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex-1">
-                          <h4 className="font-bold text-gray-900">
+                      <div className="flex items-start justify-between mb-1.5 sm:mb-2">
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-bold text-gray-900 text-xs sm:text-sm md:text-base truncate">
                             {lesson.title}
                           </h4>
-                          <p className="text-sm text-gray-600 line-clamp-1">
+                          <p className="text-[10px] sm:text-xs md:text-sm text-gray-600 line-clamp-1">
                             {lesson.description}
                           </p>
-                          <div className="flex items-center gap-3 mt-2 text-xs">
-                            <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded">
+                          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 md:gap-3 mt-1 sm:mt-1.5 md:mt-2 text-[9px] sm:text-[10px] md:text-xs">
+                            <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-purple-100 text-purple-700 rounded">
                               {lesson.level}
                             </span>
-                            <span className="text-gray-600">
+                            <span className="text-gray-600 truncate">
                               {lesson.category}
                             </span>
                             <span className="text-gray-500">
@@ -1230,27 +1232,27 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                             </span>
                           </div>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex gap-1 sm:gap-1.5 md:gap-2 flex-shrink-0 ml-2">
                           <button
                             onClick={() => navigate(`/lessons/${lesson.id}`)}
-                            className="p-2 bg-green-100 hover:bg-green-200 text-green-600 rounded-lg"
+                            className="p-1 sm:p-1.5 md:p-2 bg-green-100 hover:bg-green-200 text-green-600 rounded-md sm:rounded-lg"
                             title="View Lesson"
                           >
-                            <FaEye />
+                            <FaEye className="text-[10px] sm:text-xs md:text-sm" />
                           </button>
                           <button
                             onClick={() => handleEditLesson(lesson)}
-                            className="p-2 bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-lg"
+                            className="p-1 sm:p-1.5 md:p-2 bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-md sm:rounded-lg"
                             title="Edit Lesson"
                           >
-                            <FaEdit />
+                            <FaEdit className="text-[10px] sm:text-xs md:text-sm" />
                           </button>
                           <button
                             onClick={() => handleDeleteLesson(lesson.id)}
-                            className="p-2 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg"
+                            className="p-1 sm:p-1.5 md:p-2 bg-red-100 hover:bg-red-200 text-red-600 rounded-md sm:rounded-lg"
                             title="Delete Lesson"
                           >
-                            <FaTrash />
+                            <FaTrash className="text-[10px] sm:text-xs md:text-sm" />
                           </button>
                         </div>
                       </div>
@@ -1261,13 +1263,13 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
 
               {/* Mobile Pagination */}
               {lessons.length > lessonsPerPage && (
-                <div className="flex justify-center items-center gap-2 pt-4 border-t border-gray-200">
+                <div className="flex justify-center items-center gap-1.5 sm:gap-2 pt-3 sm:pt-4 border-t border-gray-200">
                   <button
                     onClick={() =>
                       handleLessonPageChange(currentLessonPage - 1)
                     }
                     disabled={currentLessonPage === 1}
-                    className={`px-3 py-2 rounded-lg font-semibold text-sm transition-all ${
+                    className={`px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg font-semibold text-xs sm:text-sm transition-all ${
                       currentLessonPage === 1
                         ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                         : "bg-purple-600 text-white hover:bg-purple-700"
@@ -1276,7 +1278,7 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                     Prev
                   </button>
 
-                  <span className="px-3 py-2 bg-purple-100 text-purple-700 rounded-lg font-semibold text-sm">
+                  <span className="px-2 sm:px-3 py-1.5 sm:py-2 bg-purple-100 text-purple-700 rounded-lg font-semibold text-xs sm:text-sm">
                     {currentLessonPage} / {totalLessonPages}
                   </span>
 
@@ -1285,7 +1287,7 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                       handleLessonPageChange(currentLessonPage + 1)
                     }
                     disabled={currentLessonPage === totalLessonPages}
-                    className={`px-3 py-2 rounded-lg font-semibold text-sm transition-all ${
+                    className={`px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg font-semibold text-xs sm:text-sm transition-all ${
                       currentLessonPage === totalLessonPages
                         ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                         : "bg-purple-600 text-white hover:bg-purple-700"
@@ -1447,14 +1449,14 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
               <div className="grid lg:grid-cols-2 gap-6 md:gap-8">
                 {/* Form Section */}
                 <div>
-                  <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6 flex items-center gap-2">
-                    <FaCertificate className="text-yellow-500 text-lg md:text-xl" />
+                  <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-3 sm:mb-4 md:mb-6 flex items-center gap-1.5 sm:gap-2">
+                    <FaCertificate className="text-yellow-500 text-sm sm:text-base md:text-lg lg:text-xl" />
                     Certificate Generator
                   </h2>
 
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
                         Student Name *
                       </label>
                       <input
@@ -1462,12 +1464,12 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                         value={studentName}
                         onChange={(e) => setStudentName(e.target.value)}
                         placeholder="Enter student full name"
-                        className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 text-gray-900"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 md:py-3 bg-gray-50 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 text-gray-900 text-sm sm:text-base"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
                         Course Name
                       </label>
                       <input
@@ -1475,18 +1477,18 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                         value={courseName}
                         onChange={(e) => setCourseName(e.target.value)}
                         placeholder="Enter course name"
-                        className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 text-gray-900"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 md:py-3 bg-gray-50 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 text-gray-900 text-sm sm:text-base"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
                         Performance Level
                       </label>
                       <select
                         value={grade}
                         onChange={(e) => setGrade(e.target.value)}
-                        className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 text-gray-900"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 md:py-3 bg-gray-50 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 text-gray-900 text-sm sm:text-base"
                       >
                         <option value="Outstanding">Outstanding ⭐⭐⭐⭐⭐</option>
                         <option value="Excellent">Excellent ⭐⭐⭐⭐</option>
@@ -1497,14 +1499,14 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
                         Completion Date
                       </label>
                       <input
                         type="date"
                         value={completionDate}
                         onChange={(e) => setCompletionDate(e.target.value)}
-                        className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 text-gray-900"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 md:py-3 bg-gray-50 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 text-gray-900 text-sm sm:text-base"
                       />
                     </div>
 
@@ -1530,8 +1532,8 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
 
                 {/* Preview Section */}
                 <div>
-                  <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6 flex items-center gap-2">
-                    <FaMedal className="text-yellow-500 text-lg md:text-xl" />
+                  <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-3 sm:mb-4 md:mb-6 flex items-center gap-1.5 sm:gap-2">
+                    <FaMedal className="text-yellow-500 text-sm sm:text-base md:text-lg lg:text-xl" />
                     Live Preview
                   </h2>
 
