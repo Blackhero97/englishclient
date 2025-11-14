@@ -634,23 +634,23 @@ function App() {
             selectedTestSet && !showReview ? (
               <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
                 {/* Warning Banner */}
-                <div className="bg-red-600 text-white px-4 py-3 flex items-center justify-center gap-3">
-                  <span className="text-xl">⚠️</span>
-                  <p className="font-semibold text-sm">
-                    Test in progress! Do not close this tab or leave this page
-                    until the test is complete.
+                <div className="bg-red-600 text-white px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-center gap-2 sm:gap-3">
+                  <span className="text-lg sm:text-xl">⚠️</span>
+                  <p className="font-semibold text-xs sm:text-sm text-center">
+                    <span className="hidden sm:inline">Test in progress! Do not close this tab or leave this page until the test is complete.</span>
+                    <span className="sm:hidden">Test in progress! Do not close this tab.</span>
                   </p>
                 </div>
 
                 {/* Mobile Menu Button */}
                 <button
                   onClick={() => setSidebarOpen(!sidebarOpen)}
-                  className="lg:hidden fixed bottom-6 right-6 z-50 w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-2xl flex items-center justify-center transition-all"
+                  className="lg:hidden fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-50 w-12 h-12 sm:w-14 sm:h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-2xl flex items-center justify-center transition-all"
                 >
                   {sidebarOpen ? (
-                    <FaTimes className="text-xl" />
+                    <FaTimes className="text-lg sm:text-xl" />
                   ) : (
-                    <FaBars className="text-xl" />
+                    <FaBars className="text-lg sm:text-xl" />
                   )}
                 </button>
 
@@ -665,7 +665,7 @@ function App() {
                 <div className="flex h-[calc(100vh-52px)]">
                   {/* Left Sidebar - Question Navigation */}
                   <div
-                    className={`w-80 bg-white border-r border-gray-200 overflow-y-auto transition-transform duration-300 lg:translate-x-0 ${
+                    className={`w-72 sm:w-80 bg-white border-r border-gray-200 overflow-y-auto transition-transform duration-300 lg:translate-x-0 ${
                       sidebarOpen ? "translate-x-0" : "-translate-x-full"
                     } fixed lg:static inset-y-0 left-0 z-40 lg:z-auto top-[52px]`}
                   >
@@ -788,27 +788,27 @@ function App() {
                   </div>
 
                   {/* Main Content */}
-                  <div className="flex-1 overflow-y-auto p-6">
+                  <div className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6">
                     <div className="max-w-4xl mx-auto">
                       {/* Question Card */}
-                      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 mb-6">
-                        <div className="p-4 md:p-6 border-b border-gray-100">
-                          <div className="flex justify-between items-center mb-4">
-                            <div className="flex items-center gap-3">
-                              <div className="w-12 h-12 md:w-10 md:h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                                <span className="text-blue-600 font-bold text-lg md:text-base">
+                      <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-gray-100 mb-4 sm:mb-6">
+                        <div className="p-3 sm:p-4 md:p-6 border-b border-gray-100">
+                          <div className="flex justify-between items-start sm:items-center mb-3 sm:mb-4 gap-2">
+                            <div className="flex items-center gap-2 sm:gap-3">
+                              <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-10 md:h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                <span className="text-blue-600 font-bold text-base sm:text-lg md:text-base">
                                   {current + 1}
                                 </span>
                               </div>
                               <div>
-                                <h3 className="text-base md:text-sm font-semibold text-gray-500">
+                                <h3 className="text-xs sm:text-base md:text-sm font-semibold text-gray-500">
                                   Question {current + 1} of {questions.length}
                                 </h3>
                               </div>
                             </div>
                             <button
                               onClick={() => toggleBookmark(current)}
-                              className={`flex items-center gap-2 px-3 py-2 md:px-3 md:py-2 rounded-lg transition-all touch-manipulation ${
+                              className={`flex items-center gap-1.5 sm:gap-2 px-2.5 py-2 sm:px-3 sm:py-2 md:px-3 md:py-2 rounded-lg transition-all touch-manipulation flex-shrink-0 ${
                                 bookmarked.includes(current)
                                   ? "bg-yellow-100 text-yellow-700"
                                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
@@ -816,33 +816,33 @@ function App() {
                               title="Bookmark this question (Press B)"
                             >
                               {bookmarked.includes(current) ? (
-                                <FaBookmark className="text-lg md:text-base" />
+                                <FaBookmark className="text-base sm:text-lg md:text-base" />
                               ) : (
-                                <FaRegBookmark className="text-lg md:text-base" />
+                                <FaRegBookmark className="text-base sm:text-lg md:text-base" />
                               )}
                             </button>
                           </div>
-                          <h4 className="text-lg md:text-xl font-bold text-gray-900 leading-relaxed">
+                          <h4 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 leading-relaxed">
                             {questions[current]?.question}
                           </h4>
                         </div>
 
-                        <div className="p-4 md:p-6">
-                          <div className="space-y-3 md:space-y-3">
+                        <div className="p-3 sm:p-4 md:p-6">
+                          <div className="space-y-2.5 sm:space-y-3 md:space-y-3">
                             {questions[current]?.options.map(
                               (option, index) => (
                                 <button
                                   key={index}
                                   onClick={() => handleAnswer(index)}
-                                  className={`w-full text-left px-4 py-4 md:px-5 md:py-4 rounded-xl border-2 transition-all duration-200 touch-manipulation ${
+                                  className={`w-full text-left px-3 py-3 sm:px-4 sm:py-4 md:px-5 md:py-4 rounded-lg sm:rounded-xl border-2 transition-all duration-200 touch-manipulation ${
                                     answers[current] === index
                                       ? "border-blue-500 bg-blue-50 shadow-md"
                                       : "border-gray-200 bg-white hover:border-blue-300 hover:bg-gray-50"
                                   }`}
                                 >
-                                  <div className="flex items-center gap-3 md:gap-4">
+                                  <div className="flex items-center gap-2.5 sm:gap-3 md:gap-4">
                                     <div
-                                      className={`flex-shrink-0 w-10 h-10 md:w-9 md:h-9 rounded-lg flex items-center justify-center font-bold transition-all text-base md:text-sm ${
+                                      className={`flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 md:w-9 md:h-9 rounded-lg flex items-center justify-center font-bold transition-all text-sm sm:text-base md:text-sm ${
                                         answers[current] === index
                                           ? "bg-blue-600 text-white"
                                           : "bg-gray-100 text-gray-700"
@@ -868,30 +868,30 @@ function App() {
                       </div>
 
                       {/* Navigation Buttons */}
-                      <div className="flex flex-col sm:flex-row justify-between gap-3 md:gap-4">
+                      <div className="flex flex-col sm:flex-row justify-between gap-2.5 sm:gap-3 md:gap-4">
                         <button
                           onClick={handlePrev}
                           disabled={current === 0}
-                          className="w-full sm:w-auto px-6 md:px-8 py-4 md:py-3 bg-white border-2 border-gray-200 text-gray-700 rounded-xl font-semibold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center justify-center gap-2 text-base md:text-base touch-manipulation"
+                          className="w-full sm:w-auto px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-3 bg-white border-2 border-gray-200 text-gray-700 rounded-lg sm:rounded-xl font-semibold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center justify-center gap-2 text-sm sm:text-base md:text-base touch-manipulation"
                         >
-                          <span className="text-xl md:text-base">←</span>
+                          <span className="text-lg sm:text-xl md:text-base">←</span>
                           Previous
                         </button>
 
                         {current === questions.length - 1 ? (
                           <button
                             onClick={handleFinish}
-                            className="w-full sm:w-auto px-6 md:px-8 py-4 md:py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl font-bold transition-all hover:shadow-lg flex items-center justify-center gap-2 text-base md:text-base touch-manipulation"
+                            className="w-full sm:w-auto px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-lg sm:rounded-xl font-bold transition-all hover:shadow-lg flex items-center justify-center gap-2 text-sm sm:text-base md:text-base touch-manipulation"
                           >
                             Review & Submit
                           </button>
                         ) : (
                           <button
                             onClick={handleNext}
-                            className="w-full sm:w-auto px-6 md:px-8 py-4 md:py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-bold transition-all hover:shadow-lg flex items-center justify-center gap-2 text-base md:text-base touch-manipulation"
+                            className="w-full sm:w-auto px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg sm:rounded-xl font-bold transition-all hover:shadow-lg flex items-center justify-center gap-2 text-sm sm:text-base md:text-base touch-manipulation"
                           >
                             Next
-                            <span className="text-xl md:text-base">→</span>
+                            <span className="text-lg sm:text-xl md:text-base">→</span>
                           </button>
                         )}
                       </div>

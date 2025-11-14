@@ -196,30 +196,32 @@ function LessonDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-red-50 py-6 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-red-50 py-3 sm:py-6 px-3 sm:px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
+        <div className="bg-white rounded-lg sm:rounded-xl shadow-lg p-3 sm:p-6 mb-3 sm:mb-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 mb-3 sm:mb-4">
             <button
               onClick={() => navigate("/lessons")}
-              className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-lg transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
+              className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-lg transition-all shadow-md hover:shadow-lg text-xs sm:text-sm"
             >
-              <FaArrowLeft className="text-sm" />
-              <span>Back to Lessons</span>
+              <FaArrowLeft className="text-xs sm:text-sm" />
+              <span className="hidden xs:inline">Back to Lessons</span>
+              <span className="xs:hidden">Back</span>
             </button>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2 w-full sm:w-auto">
               <button
                 onClick={exportLessonToPDF}
-                className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold rounded-lg transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
+                className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold rounded-lg transition-all shadow-md hover:shadow-lg text-xs sm:text-sm flex-1 sm:flex-initial justify-center"
                 title="Download as PDF"
               >
-                <FaFilePdf className="text-lg" />
+                <FaFilePdf className="text-sm sm:text-lg" />
                 <span className="hidden sm:inline">Download PDF</span>
+                <span className="sm:hidden">PDF</span>
               </button>
               <button
                 onClick={toggleBookmark}
-                className={`p-3 rounded-lg transition-all shadow-sm hover:shadow-md ${
+                className={`p-2 sm:p-3 rounded-lg transition-all shadow-sm hover:shadow-md ${
                   isBookmarked
                     ? "bg-yellow-100 hover:bg-yellow-200"
                     : "bg-gray-100 hover:bg-gray-200"
@@ -234,25 +236,25 @@ function LessonDetail() {
               </button>
               <button
                 onClick={() => window.print()}
-                className="p-3 bg-gray-100 hover:bg-blue-100 rounded-lg transition-all shadow-sm hover:shadow-md"
+                className="p-2 sm:p-3 bg-gray-100 hover:bg-blue-100 rounded-lg transition-all shadow-sm hover:shadow-md"
                 title="Print lesson"
               >
-                <FaPrint className="text-gray-600 text-xl" />
+                <FaPrint className="text-gray-600 text-lg sm:text-xl" />
               </button>
             </div>
           </div>
 
           {/* Lesson Info */}
-          <div className="border-t border-gray-200 pt-4">
-            <div className="flex items-start justify-between gap-4">
+          <div className="border-t border-gray-200 pt-3 sm:pt-4">
+            <div className="flex flex-col-reverse sm:flex-row items-start justify-between gap-3 sm:gap-4">
               <div className="flex-1">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-2">
                   {lesson.title}
                 </h1>
-                <p className="text-gray-600 mb-4">{lesson.description}</p>
-                <div className="flex flex-wrap items-center gap-4">
+                <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">{lesson.description}</p>
+                <div className="flex flex-wrap items-center gap-2 sm:gap-4">
                   <span
-                    className={`px-4 py-2 rounded-lg font-semibold text-sm ${
+                    className={`px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold text-xs sm:text-sm ${
                       lesson.level === "Beginner"
                         ? "bg-green-100 text-green-700"
                         : lesson.level === "Intermediate"
@@ -262,19 +264,19 @@ function LessonDetail() {
                   >
                     {lesson.level}
                   </span>
-                  <span className="flex items-center gap-2 text-purple-600 font-semibold">
-                    <FaGraduationCap />
+                  <span className="flex items-center gap-1.5 sm:gap-2 text-purple-600 font-semibold text-xs sm:text-sm">
+                    <FaGraduationCap className="text-sm sm:text-base" />
                     {lesson.category}
                   </span>
-                  <span className="flex items-center gap-2 text-gray-600">
-                    <FaClock />
+                  <span className="flex items-center gap-1.5 sm:gap-2 text-gray-600 text-xs sm:text-sm">
+                    <FaClock className="text-sm sm:text-base" />
                     {lesson.duration}
                   </span>
                 </div>
               </div>
-              <div className="flex-shrink-0">
-                <div className="w-20 h-20 bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl flex items-center justify-center">
-                  <FaBook className="text-4xl text-purple-600" />
+              <div className="flex-shrink-0 self-center sm:self-start">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl flex items-center justify-center">
+                  <FaBook className="text-3xl sm:text-4xl text-purple-600" />
                 </div>
               </div>
             </div>

@@ -86,16 +86,17 @@ function LessonsModule({ isAdmin }) {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-4 px-4 lg:px-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="mb-4 sm:mb-6">
           <button
             onClick={() => navigate("/")}
-            className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-lg transition-all shadow-md border border-gray-200"
+            className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-lg transition-all shadow-md border border-gray-200 text-sm sm:text-base mb-3 sm:mb-4"
           >
-            <FaArrowLeft className="text-sm" />
-            <span>Back to Dashboard</span>
+            <FaArrowLeft className="text-xs sm:text-sm" />
+            <span className="hidden sm:inline">Back to Dashboard</span>
+            <span className="sm:hidden">Back</span>
           </button>
-          <h1 className="text-2xl md:text-3xl font-bold text-center flex-1 text-gray-900">
-            English Lessons
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+            📚 English Lessons
           </h1>
           {isAdmin && (
             <button
@@ -109,8 +110,8 @@ function LessonsModule({ isAdmin }) {
         </div>
 
         {/* Filters */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200 shadow-lg p-4 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="bg-white/80 backdrop-blur-sm rounded-lg sm:rounded-xl border border-gray-200 shadow-lg p-3 sm:p-4 mb-4 sm:mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-3">
             {/* Search */}
             <div className="relative">
               <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm" />
@@ -119,7 +120,7 @@ function LessonsModule({ isAdmin }) {
                 placeholder="Search lessons..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 text-sm bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all placeholder-gray-400 shadow-sm hover:border-gray-300"
+                className="w-full pl-8 sm:pl-10 pr-3 sm:pr-4 py-2 text-xs sm:text-sm bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all placeholder-gray-400 shadow-sm hover:border-gray-300"
               />
             </div>
 
@@ -127,7 +128,7 @@ function LessonsModule({ isAdmin }) {
             <select
               value={selectedLevel}
               onChange={(e) => setSelectedLevel(e.target.value)}
-              className="px-4 py-2 text-sm text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all cursor-pointer shadow-sm hover:border-gray-300"
+              className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all cursor-pointer shadow-sm hover:border-gray-300"
             >
               {levels.map((level) => (
                 <option key={level} value={level}>
@@ -181,20 +182,20 @@ function LessonsModule({ isAdmin }) {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {currentLessons.map((lesson) => (
                 <div
                   key={lesson.id}
                   onClick={() => navigate(`/lessons/${lesson.id}`)}
-                  className="group bg-white/80 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-xl border border-gray-200 hover:border-blue-400 p-5 cursor-pointer transition-all duration-300 hover:-translate-y-1"
+                  className="group bg-white/80 backdrop-blur-sm rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl border border-gray-200 hover:border-blue-400 p-4 sm:p-5 cursor-pointer transition-all duration-300 hover:-translate-y-1"
                 >
                   {/* Icon & Badge */}
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all shadow-md">
-                      <FaBook className="text-xl text-white" />
+                  <div className="flex items-start justify-between mb-3 sm:mb-4">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all shadow-md">
+                      <FaBook className="text-lg sm:text-xl text-white" />
                     </div>
                     <span
-                      className={`px-3 py-1 rounded-lg text-xs font-bold shadow-sm ${
+                      className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded-md sm:rounded-lg text-xs font-bold shadow-sm ${
                         lesson.level === "Beginner"
                           ? "bg-gradient-to-r from-green-400 to-emerald-500 text-white"
                           : lesson.level === "Intermediate"
@@ -207,30 +208,30 @@ function LessonsModule({ isAdmin }) {
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1.5 sm:mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
                     {lesson.title}
                   </h3>
 
                   {/* Description */}
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">
+                  <p className="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-2 leading-relaxed">
                     {lesson.description}
                   </p>
 
                   {/* Meta Info */}
-                  <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                  <div className="flex items-center justify-between pt-2 sm:pt-3 border-t border-gray-100">
                     <span className="flex items-center gap-1 text-xs text-gray-600 font-semibold">
-                      <FaGraduationCap className="text-indigo-600" />
-                      {lesson.category}
+                      <FaGraduationCap className="text-indigo-600 text-xs sm:text-sm" />
+                      <span className="truncate">{lesson.category}</span>
                     </span>
-                    <span className="flex items-center gap-1 text-xs text-gray-600 font-semibold">
-                      <FaClock className="text-blue-600" />
+                    <span className="flex items-center gap-1 text-xs text-gray-600 font-semibold whitespace-nowrap">
+                      <FaClock className="text-blue-600 text-xs sm:text-sm" />
                       {lesson.duration}
                     </span>
                   </div>
 
                   {/* Action */}
-                  <div className="mt-3 pt-3 border-t border-gray-100">
-                    <div className="w-full text-center text-sm font-bold text-blue-600 group-hover:text-indigo-600 transition-colors">
+                  <div className="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-gray-100">
+                    <div className="w-full text-center text-xs sm:text-sm font-bold text-blue-600 group-hover:text-indigo-600 transition-colors">
                       Start Lesson →
                     </div>
                   </div>
