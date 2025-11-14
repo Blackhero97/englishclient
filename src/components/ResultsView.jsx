@@ -299,7 +299,7 @@ function ResultsView({ onBack }) {
                 <FaArrowLeft className="text-gray-700 text-base md:text-lg" />
               </button>
               <div className="min-w-0 flex-1">
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
                   Results
                 </h1>
                 <p className="text-gray-500 text-sm md:text-base mt-1 hidden sm:block">
@@ -321,7 +321,7 @@ function ResultsView({ onBack }) {
                 </button>
               )}
               <div className="text-right flex-shrink-0">
-                <div className="text-2xl md:text-3xl font-bold text-blue-600">
+                <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-blue-600">
                   {results.length}
                 </div>
                 <div className="text-xs md:text-sm text-gray-500">Total</div>
@@ -488,7 +488,7 @@ function ResultsView({ onBack }) {
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-lg text-gray-900 mb-1">
+                      <h3 className="font-bold text-base sm:text-lg text-gray-900 mb-1">
                         {result.firstName} {result.lastName}
                       </h3>
                       <p className="text-sm text-gray-600 mb-1">
@@ -507,10 +507,10 @@ function ResultsView({ onBack }) {
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-3">
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                  <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                    <div className="bg-gray-50 rounded-lg p-2 sm:p-3 text-center">
                       <div
-                        className={`text-2xl font-bold mb-1 ${
+                        className={`text-lg sm:text-xl md:text-2xl font-bold mb-0.5 sm:mb-1 ${
                           result.percentage >= 80
                             ? "text-green-600"
                             : result.percentage >= 60
@@ -520,25 +520,25 @@ function ResultsView({ onBack }) {
                       >
                         {result.percentage}%
                       </div>
-                      <div className="text-xs text-gray-500">Score</div>
+                      <div className="text-[10px] sm:text-xs text-gray-500">Score</div>
                     </div>
-                    <div className="bg-green-50 rounded-lg p-3 text-center">
-                      <div className="flex items-center justify-center gap-1 mb-1">
-                        <FaCheckCircle className="text-green-600 text-sm" />
-                        <span className="text-xl font-bold text-green-700">
+                    <div className="bg-green-50 rounded-lg p-2 sm:p-3 text-center">
+                      <div className="flex items-center justify-center gap-0.5 sm:gap-1 mb-0.5 sm:mb-1">
+                        <FaCheckCircle className="text-green-600 text-xs sm:text-sm" />
+                        <span className="text-base sm:text-lg md:text-xl font-bold text-green-700">
                           {result.correctAnswers}
                         </span>
                       </div>
-                      <div className="text-xs text-gray-500">Correct</div>
+                      <div className="text-[10px] sm:text-xs text-gray-500">Correct</div>
                     </div>
-                    <div className="bg-red-50 rounded-lg p-3 text-center">
-                      <div className="flex items-center justify-center gap-1 mb-1">
-                        <FaTimesCircle className="text-red-600 text-sm" />
-                        <span className="text-xl font-bold text-red-700">
+                    <div className="bg-red-50 rounded-lg p-2 sm:p-3 text-center">
+                      <div className="flex items-center justify-center gap-0.5 sm:gap-1 mb-0.5 sm:mb-1">
+                        <FaTimesCircle className="text-red-600 text-xs sm:text-sm" />
+                        <span className="text-base sm:text-lg md:text-xl font-bold text-red-700">
                           {result.wrongAnswers}
                         </span>
                       </div>
-                      <div className="text-xs text-gray-500">Wrong</div>
+                      <div className="text-[10px] sm:text-xs text-gray-500">Wrong</div>
                     </div>
                   </div>
 
@@ -576,13 +576,13 @@ function ResultsView({ onBack }) {
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
-            <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 rounded-t-2xl">
+            <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 sm:p-5 md:p-6 rounded-t-2xl">
               <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold mb-1">
+                <div className="flex-1 min-w-0 mr-2">
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-1 truncate">
                     Detailed Analysis
                   </h2>
-                  <p className="text-blue-100 text-sm">
+                  <p className="text-blue-100 text-xs sm:text-sm truncate">
                     {detailedAnalysis?.firstName} {detailedAnalysis?.lastName} - {detailedAnalysis?.testName}
                   </p>
                 </div>
@@ -598,9 +598,9 @@ function ResultsView({ onBack }) {
             {/* Modal Content */}
             <div className="p-6">
               {/* Summary Stats */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 text-center">
-                  <div className="text-3xl font-bold text-blue-600 mb-1">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-3 sm:p-4 text-center">
+                  <div className="text-2xl sm:text-3xl font-bold text-blue-600 mb-1">
                     {detailedAnalysis?.percentage || 0}%
                   </div>
                   <div className="text-sm text-gray-600">Final Score</div>
@@ -621,8 +621,8 @@ function ResultsView({ onBack }) {
 
               {/* Questions Review */}
               <div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <FaClipboardList className="text-blue-600" />
+                <h3 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 mb-3 sm:mb-4 flex items-center gap-1.5 sm:gap-2">
+                  <FaClipboardList className="text-blue-600 text-sm sm:text-base" />
                   Question by Question Review
                 </h3>
                 {!detailedAnalysis?.answers || detailedAnalysis.answers.length === 0 || typeof detailedAnalysis.answers?.[0] === 'number' ? (
