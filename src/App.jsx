@@ -297,16 +297,39 @@ function App() {
     // Tests are saved via API in AdminPanel component
   };
 
+  // Shuffle questions using Fisher-Yates algorithm - har bir o'quvchi uchun har hil tartib
+  const shuffleQuestions = (questions) => {
+    const shuffled = [...questions];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
   const handleSelectTest = (testSet, firstName, lastName) => {
     setName(firstName);
     setSurname(lastName);
-    setSelectedTestSet(testSet);
-    setAnswers(new Array(testSet.questions.length).fill(null));
+    
+    // Savollarni tasodifiy tartibda aralashtirish
+    const shuffledTestSet = {
+      ...testSet,
+      questions: shuffleQuestions(testSet.questions)
+    };
+    
+    setSelectedTestSet(shuffledTestSet);
+    setAnswers(new Array(shuffledTestSet.questions.length).fill(null));
     setBookmarked([]);
     setCurrent(0);
     setTimeLeft((testSet.duration || 30) * 60);
     setShowReview(false);
     setResultSaved(false); // Reset result saved flag when starting new test
+    
+    toast.success("Questions randomized for fair testing! 🎲", {
+      position: "top-center",
+      autoClose: 2000,
+    });
+    
     navigate("/test");
   };
 
