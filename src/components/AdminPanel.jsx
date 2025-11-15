@@ -40,6 +40,8 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
   const [newTestName, setNewTestName] = useState("");
   const [newTestDesc, setNewTestDesc] = useState("");
   const [newTestDuration, setNewTestDuration] = useState(45);
+  const [newTestStartDate, setNewTestStartDate] = useState("");
+  const [newTestEndDate, setNewTestEndDate] = useState("");
 
   // Question form
   const [editingQuestion, setEditingQuestion] = useState(null);
@@ -409,6 +411,8 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
       name: newTestName,
       description: newTestDesc,
       duration: newTestDuration,
+      startDate: newTestStartDate || null,
+      endDate: newTestEndDate || null,
       questions: [],
     };
 
@@ -436,6 +440,8 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
     setNewTestName("");
     setNewTestDesc("");
     setNewTestDuration(45);
+    setNewTestStartDate("");
+    setNewTestEndDate("");
   };
 
   const handleDeleteTest = async (testId) => {
@@ -821,6 +827,30 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                           }
                           className="w-full px-3 py-2 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all text-gray-900 text-sm"
                         />
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <label className="block text-gray-700 font-semibold mb-1.5 text-xs">
+                            Start Date & Time
+                          </label>
+                          <input
+                            type="datetime-local"
+                            value={newTestStartDate}
+                            onChange={(e) => setNewTestStartDate(e.target.value)}
+                            className="w-full px-2 py-2 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100 transition-all text-gray-900 text-xs"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-gray-700 font-semibold mb-1.5 text-xs">
+                            End Date & Time
+                          </label>
+                          <input
+                            type="datetime-local"
+                            value={newTestEndDate}
+                            onChange={(e) => setNewTestEndDate(e.target.value)}
+                            className="w-full px-2 py-2 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100 transition-all text-gray-900 text-xs"
+                          />
+                        </div>
                       </div>
                     </div>
                     <div className="flex gap-2 mt-3">

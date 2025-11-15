@@ -80,6 +80,38 @@ function TestSelection({ testSets, loading, onSelectTest, user, onUserLogin }) {
 
   const handleStartTest = () => {
     if (selectedTest) {
+      // Deadline tekshiruvi
+      const now = new Date();
+      
+      if (selectedTest.startDate) {
+        const startDate = new Date(selectedTest.startDate);
+        if (now < startDate) {
+          const startFormatted = startDate.toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+          toast.error(`Test will be available from ${startFormatted}`, {
+            position: "top-center",
+            autoClose: 5000,
+          });
+          return;
+        }
+      }
+      
+      if (selectedTest.endDate) {
+        const endDate = new Date(selectedTest.endDate);
+        if (now > endDate) {
+          toast.error('This test deadline has passed!', {
+            position: "top-center",
+            autoClose: 4000,
+          });
+          return;
+        }
+      }
+      
       onSelectTest(selectedTest, firstName, lastName);
     }
   };
@@ -250,6 +282,32 @@ function TestSelection({ testSets, loading, onSelectTest, user, onUserLogin }) {
                         </span>
                       </div>
                     </div>
+                    
+                    {/* Deadline info */}
+                    {(test.startDate || test.endDate) && (
+                      <div className="mt-3 pt-3 border-t border-gray-200">
+                        {test.startDate && (
+                          <div className="text-xs text-green-600 font-semibold mb-1">
+                            🟢 Available from: {new Date(test.startDate).toLocaleString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </div>
+                        )}
+                        {test.endDate && (
+                          <div className="text-xs text-red-600 font-semibold">
+                            🔴 Deadline: {new Date(test.endDate).toLocaleString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
