@@ -134,9 +134,9 @@ function ResultsView({ onBack }) {
             : "Needs Improvement",
       };
       
-      // Add section stats columns
+      // Add section stats columns - only show correct answers count
       sections.forEach((section, idx) => {
-        baseData[`Section ${idx + 1} (1-${section.total})`] = `${section.correct}/${section.total}`;
+        baseData[`Section ${idx + 1}`] = section.correct;
       });
       
       return baseData;
