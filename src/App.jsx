@@ -1285,7 +1285,7 @@ function App() {
                       </div>
 
                       {/* Section Statistics - Har 10 ta savol bo'yicha */}
-                      {sectionStats.length > 1 && (
+                      {sectionStats.length > 0 && (
                         <div className="bg-white rounded-xl shadow-lg p-4 md:p-5 border border-gray-100">
                           <h3 className="text-sm md:text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
                             <FaChartBar className="text-blue-600" />
