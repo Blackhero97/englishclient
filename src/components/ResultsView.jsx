@@ -96,31 +96,62 @@ function ResultsView({ onBack }) {
       return;
     }
 
-    // Prepare data for Excel
-    const excelData = results.map((result, index) => ({
-      "#": index + 1,
-      Date: formatDate(result.createdAt),
-      "First Name": result.firstName,
-      "Last Name": result.lastName,
-      "Test Name": result.testName,
-      "Total Questions": result.totalQuestions,
-      "Correct Answers": result.correctAnswers,
-      "Wrong Answers": result.wrongAnswers,
-      "Percentage": result.percentage + "%",
-      Status:
-        result.percentage >= 80
-          ? "Excellent"
-          : result.percentage >= 60
-          ? "Good"
-          : "Needs Improvement",
-    }));
+    // Helper function to calculate section stats
+    const getSectionStats = (answers) => {
+      const sections = [];
+      const totalQuestions = answers.length;
+      const sectionsCount = Math.ceil(totalQuestions / 10);
+      
+      for (let i = 0; i < sectionsCount; i++) {
+        const start = i * 10;
+        const end = Math.min(start + 10, totalQuestions);
+        const sectionAnswers = answers.slice(start, end);
+        const correct = sectionAnswers.filter(a => a.selectedAnswer === a.correctAnswer).length;
+        sections.push({ section: i + 1, correct, total: sectionAnswers.length });
+      }
+      
+      return sections;
+    };
+
+    // Prepare data for Excel with section stats
+    const excelData = results.map((result, index) => {
+      const sections = result.answers ? getSectionStats(result.answers) : [];
+      const baseData = {
+        "#": index + 1,
+        Date: formatDate(result.createdAt),
+        "First Name": result.firstName,
+        "Last Name": result.lastName,
+        "Test Name": result.testName,
+        "Total Questions": result.totalQuestions,
+        "Correct Answers": result.correctAnswers,
+        "Wrong Answers": result.wrongAnswers,
+        "Percentage": result.percentage + "%",
+        Status:
+          result.percentage >= 80
+            ? "Excellent"
+            : result.percentage >= 60
+            ? "Good"
+            : "Needs Improvement",
+      };
+      
+      // Add section stats columns
+      sections.forEach((section, idx) => {
+        baseData[`Section ${idx + 1} (1-${section.total})`] = `${section.correct}/${section.total}`;
+      });
+      
+      return baseData;
+    });
 
     // Create workbook and worksheet
     const ws = XLSX.utils.json_to_sheet(excelData);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Test Results");
 
-    // Set column widths
+    // Set column widths dynamically based on sections
+    const maxSections = Math.max(...results.map(r => 
+      r.answers ? Math.ceil(r.answers.length / 10) : 0
+    ));
+    
     const colWidths = [
       { wch: 5 },  // #
       { wch: 20 }, // Date
@@ -133,6 +164,12 @@ function ResultsView({ onBack }) {
       { wch: 12 }, // Percentage
       { wch: 18 }, // Status
     ];
+    
+    // Add widths for section columns
+    for (let i = 0; i < maxSections; i++) {
+      colWidths.push({ wch: 18 }); // Section columns
+    }
+    
     ws["!cols"] = colWidths;
 
     // Generate file name with current date
