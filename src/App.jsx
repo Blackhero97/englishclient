@@ -1450,32 +1450,29 @@ function App() {
                                       {question.question}
                                     </p>
 
-                                    {/* Options */}
+                                    {/* Options - Only show user's answer */}
                                     <div className="space-y-2">
                                       {question.options.map(
                                         (option, optIndex) => {
                                           const isUserAnswer =
                                             userAnswer === optIndex;
-                                          const isCorrectAnswer =
-                                            question.answer === optIndex;
                                           return (
                                             <div
                                               key={optIndex}
                                               className={`p-3 rounded-lg border-2 text-sm transition-all ${
-                                                isCorrectAnswer
+                                                isUserAnswer && isCorrect
                                                   ? "bg-green-100 border-green-500 font-semibold"
                                                   : isUserAnswer && !isCorrect
-                                                  ? "bg-red-100 border-red-500"
-                                                  : "bg-white border-gray-200"
+                                                  ? "bg-red-100 border-red-500 font-semibold"
+                                                  : "bg-gray-50 border-gray-200"
                                               }`}
                                             >
                                               <div className="flex items-center gap-2">
                                                 <span
                                                   className={`flex-shrink-0 w-5 h-5 rounded flex items-center justify-center font-bold text-xs ${
-                                                    isCorrectAnswer
+                                                    isUserAnswer && isCorrect
                                                       ? "bg-green-500 text-white"
-                                                      : isUserAnswer &&
-                                                        !isCorrect
+                                                      : isUserAnswer && !isCorrect
                                                       ? "bg-red-500 text-white"
                                                       : "bg-gray-300 text-gray-600"
                                                   }`}
@@ -1486,15 +1483,14 @@ function App() {
                                                 </span>
                                                 <span
                                                   className={`flex-1 ${
-                                                    isCorrectAnswer ||
-                                                    (isUserAnswer && !isCorrect)
+                                                    isUserAnswer
                                                       ? "font-semibold text-gray-900"
                                                       : "text-gray-600"
                                                   }`}
                                                 >
                                                   {option}
                                                 </span>
-                                                {isCorrectAnswer && (
+                                                {isUserAnswer && isCorrect && (
                                                   <FaCheckCircle className="text-green-600 text-xs flex-shrink-0" />
                                                 )}
                                                 {isUserAnswer && !isCorrect && (
