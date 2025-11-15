@@ -29,6 +29,7 @@ import {
   FaGraduationCap,
   FaUserTie,
   FaRobot,
+  FaChartBar,
 } from "react-icons/fa";
 
 // Admin password from environment variable (can be changed in Netlify settings)
@@ -130,6 +131,41 @@ function App() {
   const score = getScore(answers, questions);
   const maxScore = 100;
   const percent = Math.round((score / maxScore) * 100);
+
+  // Savollarni har 10 talik qismlarga bo'lib statistika hisoblash
+  const getSectionStats = () => {
+    if (!questions || questions.length === 0) return [];
+    
+    const sections = [];
+    const sectionSize = 10;
+    const totalSections = Math.ceil(questions.length / sectionSize);
+    
+    for (let i = 0; i < totalSections; i++) {
+      const start = i * sectionSize;
+      const end = Math.min(start + sectionSize, questions.length);
+      const sectionQuestions = questions.slice(start, end);
+      const sectionAnswers = answers.slice(start, end);
+      
+      let correctInSection = 0;
+      for (let j = 0; j < sectionQuestions.length; j++) {
+        if (sectionAnswers[j] !== null && sectionAnswers[j] === sectionQuestions[j]?.answer) {
+          correctInSection++;
+        }
+      }
+      
+      sections.push({
+        number: i + 1,
+        range: `${start + 1}-${end}`,
+        total: sectionQuestions.length,
+        correct: correctInSection,
+        percentage: Math.round((correctInSection / sectionQuestions.length) * 100)
+      });
+    }
+    
+    return sections;
+  };
+
+  const sectionStats = getSectionStats();
 
   // Fetch tests from API on mount
   useEffect(() => {
@@ -1247,6 +1283,68 @@ function App() {
                           </div>
                         </div>
                       </div>
+
+                      {/* Section Statistics - Har 10 ta savol bo'yicha */}
+                      {sectionStats.length > 1 && (
+                        <div className="bg-white rounded-xl shadow-lg p-4 md:p-5 border border-gray-100">
+                          <h3 className="text-sm md:text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                            <FaChartBar className="text-blue-600" />
+                            Section Performance
+                          </h3>
+                          <div className="space-y-2">
+                            {sectionStats.map((section) => (
+                              <div
+                                key={section.number}
+                                className="bg-gray-50 rounded-lg p-3 border border-gray-200"
+                              >
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center">
+                                      <span className="text-xs font-bold text-blue-600">
+                                        {section.number}
+                                      </span>
+                                    </div>
+                                    <div>
+                                      <div className="text-xs font-semibold text-gray-900">
+                                        Questions {section.range}
+                                      </div>
+                                      <div className="text-[10px] text-gray-500">
+                                        {section.correct} / {section.total} correct
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="text-right">
+                                    <div
+                                      className={`text-lg font-bold ${
+                                        section.percentage >= 80
+                                          ? "text-green-600"
+                                          : section.percentage >= 60
+                                          ? "text-yellow-600"
+                                          : "text-red-600"
+                                      }`}
+                                    >
+                                      {section.percentage}%
+                                    </div>
+                                  </div>
+                                </div>
+                                {/* Progress Bar */}
+                                <div className="w-full bg-gray-200 rounded-full h-2">
+                                  <div
+                                    className={`h-2 rounded-full transition-all ${
+                                      section.percentage >= 80
+                                        ? "bg-green-500"
+                                        : section.percentage >= 60
+                                        ? "bg-yellow-500"
+                                        : "bg-red-500"
+                                    }`}
+                                    style={{ width: `${section.percentage}%` }}
+                                  ></div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
 
                       {/* Action Buttons */}
                       <div className="flex flex-col gap-3">
