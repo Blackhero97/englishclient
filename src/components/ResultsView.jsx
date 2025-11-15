@@ -619,6 +619,98 @@ function ResultsView({ onBack }) {
                 </div>
               </div>
 
+              {/* Section Performance - Har 10 ta savol bo'yicha */}
+              {(() => {
+                const totalQuestions = detailedAnalysis?.totalQuestions || 0;
+                if (totalQuestions === 0 || !detailedAnalysis?.answers || typeof detailedAnalysis.answers?.[0] === 'number') return null;
+                
+                const sections = [];
+                const sectionSize = 10;
+                const totalSections = Math.ceil(totalQuestions / sectionSize);
+                
+                for (let i = 0; i < totalSections; i++) {
+                  const start = i * sectionSize;
+                  const end = Math.min(start + sectionSize, totalQuestions);
+                  const sectionAnswers = detailedAnalysis.answers.slice(start, end);
+                  
+                  let correctInSection = 0;
+                  for (let j = 0; j < sectionAnswers.length; j++) {
+                    if (sectionAnswers[j]?.selectedAnswer === sectionAnswers[j]?.correctAnswer) {
+                      correctInSection++;
+                    }
+                  }
+                  
+                  sections.push({
+                    number: i + 1,
+                    range: `${start + 1}-${end}`,
+                    total: sectionAnswers.length,
+                    correct: correctInSection,
+                    percentage: Math.round((correctInSection / sectionAnswers.length) * 100)
+                  });
+                }
+                
+                return (
+                  <div className="bg-white rounded-xl shadow-lg p-4 mb-6 border border-gray-200">
+                    <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                      <FaChartBar className="text-blue-600" />
+                      Section Performance
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {sections.map((section) => (
+                        <div
+                          key={section.number}
+                          className="bg-gray-50 rounded-lg p-3 border border-gray-200"
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <div className="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <span className="text-xs font-bold text-blue-600">
+                                  {section.number}
+                                </span>
+                              </div>
+                              <div>
+                                <div className="text-xs font-semibold text-gray-900">
+                                  Questions {section.range}
+                                </div>
+                                <div className="text-[10px] text-gray-500">
+                                  {section.correct} / {section.total} correct
+                                </div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div
+                                className={`text-lg font-bold ${
+                                  section.percentage >= 80
+                                    ? "text-green-600"
+                                    : section.percentage >= 60
+                                    ? "text-yellow-600"
+                                    : "text-red-600"
+                                }`}
+                              >
+                                {section.percentage}%
+                              </div>
+                            </div>
+                          </div>
+                          {/* Progress Bar */}
+                          <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div
+                              className={`h-2 rounded-full transition-all ${
+                                section.percentage >= 80
+                                  ? "bg-green-500"
+                                  : section.percentage >= 60
+                                  ? "bg-yellow-500"
+                                  : "bg-red-500"
+                              }`}
+                              style={{ width: `${section.percentage}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
+
               {/* Questions Review */}
               <div>
                 <h3 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 mb-3 sm:mb-4 flex items-center gap-1.5 sm:gap-2">
