@@ -406,13 +406,17 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
   const handleCreateTest = async () => {
     if (!newTestName.trim()) return;
 
+    // Convert datetime-local to ISO string to preserve local timezone
+    const startDateISO = newTestStartDate ? new Date(newTestStartDate).toISOString() : null;
+    const endDateISO = newTestEndDate ? new Date(newTestEndDate).toISOString() : null;
+
     const newTest = {
       id: `test-${Date.now()}`,
       name: newTestName,
       description: newTestDesc,
       duration: newTestDuration,
-      startDate: newTestStartDate || null,
-      endDate: newTestEndDate || null,
+      startDate: startDateISO,
+      endDate: endDateISO,
       questions: [],
     };
 

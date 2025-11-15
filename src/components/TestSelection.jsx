@@ -78,6 +78,27 @@ function TestSelection({ testSets, loading, onSelectTest, user, onUserLogin }) {
     setSelectedTest(test);
   };
 
+  // Check if test is available based on deadline
+  const getTestStatus = (test) => {
+    const now = new Date();
+    
+    if (test.startDate) {
+      const startDate = new Date(test.startDate);
+      if (now < startDate) {
+        return { available: false, status: 'locked', date: startDate };
+      }
+    }
+    
+    if (test.endDate) {
+      const endDate = new Date(test.endDate);
+      if (now > endDate) {
+        return { available: false, status: 'expired', date: endDate };
+      }
+    }
+    
+    return { available: true, status: 'active' };
+  };
+
   const handleStartTest = () => {
     if (selectedTest) {
       // Deadline tekshiruvi
@@ -283,31 +304,82 @@ function TestSelection({ testSets, loading, onSelectTest, user, onUserLogin }) {
                       </div>
                     </div>
                     
-                    {/* Deadline info */}
-                    {(test.startDate || test.endDate) && (
-                      <div className="mt-3 pt-3 border-t border-gray-200">
-                        {test.startDate && (
-                          <div className="text-xs text-green-600 font-semibold mb-1">
-                            🟢 Available from: {new Date(test.startDate).toLocaleString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
+                    {/* Deadline status */}
+                    {(() => {
+                      const status = getTestStatus(test);
+                      
+                      if (status.status === 'locked') {
+                        return (
+                          <div className="mt-3 pt-3 border-t border-gray-200">
+                            <div className="flex items-center gap-2 bg-yellow-50 border border-yellow-200 rounded-lg p-2">
+                              <span className="text-2xl">🔒</span>
+                              <div className="flex-1">
+                                <div className="text-xs font-bold text-yellow-800">LOCKED</div>
+                                <div className="text-xs text-yellow-700">
+                                  Available from: {status.date.toLocaleString('en-US', {
+                                    month: 'short',
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                  })}
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                        )}
-                        {test.endDate && (
-                          <div className="text-xs text-red-600 font-semibold">
-                            🔴 Deadline: {new Date(test.endDate).toLocaleString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
+                        );
+                      }
+                      
+                      if (status.status === 'expired') {
+                        return (
+                          <div className="mt-3 pt-3 border-t border-gray-200">
+                            <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg p-2">
+                              <span className="text-2xl">⏱️</span>
+                              <div className="flex-1">
+                                <div className="text-xs font-bold text-red-800">DEADLINE PASSED</div>
+                                <div className="text-xs text-red-700">
+                                  Ended: {status.date.toLocaleString('en-US', {
+                                    month: 'short',
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                  })}
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                        )}
-                      </div>
-                    )}
+                        );
+                      }
+                      
+                      // Show deadline info if available
+                      if (test.startDate || test.endDate) {
+                        return (
+                          <div className="mt-3 pt-3 border-t border-gray-200">
+                            {test.startDate && (
+                              <div className="text-xs text-green-600 font-semibold mb-1">
+                                🟢 Available from: {new Date(test.startDate).toLocaleString('en-US', {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </div>
+                            )}
+                            {test.endDate && (
+                              <div className="text-xs text-red-600 font-semibold">
+                                🔴 Deadline: {new Date(test.endDate).toLocaleString('en-US', {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      }
+                      
+                      return null;
+                    })()}
                   </div>
                 ))}
               </div>
@@ -322,10 +394,15 @@ function TestSelection({ testSets, loading, onSelectTest, user, onUserLogin }) {
                 </button>
                 <button
                   onClick={handleStartTest}
-                  disabled={!selectedTest}
+                  disabled={!selectedTest || (selectedTest && !getTestStatus(selectedTest).available)}
                   className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-sm font-bold py-2 rounded-lg transition-all shadow-lg disabled:shadow-none"
                 >
-                  {selectedTest ? `Start ${selectedTest.name} →` : "Select a Test"}
+                  {!selectedTest 
+                    ? "Select a Test" 
+                    : !getTestStatus(selectedTest).available
+                    ? `${getTestStatus(selectedTest).status === 'locked' ? '🔒 Test Locked' : '⏱️ Deadline Passed'}`
+                    : `Start ${selectedTest.name} →`
+                  }
                 </button>
               </div>
             </>
