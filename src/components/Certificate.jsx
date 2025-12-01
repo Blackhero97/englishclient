@@ -111,7 +111,7 @@ function Certificate() {
       // Signature section
       const signatureY = 175;
 
-      // Left signature (Instructor)
+      // Left signature (English Teacher)
       doc.setDrawColor(100, 100, 100);
       doc.line(40, signatureY, 90, signatureY);
       doc.setFontSize(11);
@@ -122,9 +122,10 @@ function Certificate() {
       doc.text("English Teacher", 65, signatureY + 8, { align: "center" });
 
       // Right signature (Director)
+      doc.setDrawColor(100, 100, 100);
+      doc.line(pageWidth - 90, signatureY, pageWidth - 40, signatureY);
       doc.setFontSize(11);
       doc.setTextColor(60, 60, 60);
-      doc.line(pageWidth - 90, signatureY, pageWidth - 40, signatureY);
       doc.text("D.Rustamov", pageWidth - 65, signatureY + 2, {
         align: "center",
       });

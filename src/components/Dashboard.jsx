@@ -46,7 +46,7 @@ function Dashboard({ user, onUserLogin }) {
                 </div>
                 <div>
                   <h1 className="text-xl sm:text-2xl lg:text-4xl font-bold text-white mb-1">
-                    Welcome to English Learning Platform
+                    Welcome to English Learning Platform .....
                   </h1>
                   <p className="text-blue-100 text-sm sm:text-base lg:text-lg">
                     Your journey to English fluency starts here

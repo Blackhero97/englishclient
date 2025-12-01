@@ -175,7 +175,7 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
       // Use Helvetica font which is closest to Space Grotesk in jsPDF built-in fonts
       // Set as default font for entire document
       doc.setFont("helvetica", "normal");
-      
+
       // Modern gradient-style background (simulated with rectangles)
       doc.setFillColor(249, 250, 251);
       doc.rect(0, 0, pageWidth, pageHeight, "F");
@@ -287,7 +287,7 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
       doc.setFontSize(12);
       doc.setTextColor(75, 85, 99);
       doc.setFont("helvetica", "bold");
-      doc.text("Miss Nora", 67.5, signatureY - 8, { align: "center" });
+      doc.text("Samiyeva Gulnora", 67.5, signatureY - 8, { align: "center" });
       doc.setFontSize(10);
       doc.setFont("helvetica", "normal");
       doc.text("English Teacher", 67.5, signatureY + 6, { align: "center" });
@@ -318,12 +318,12 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
       doc.setFontSize(12);
       doc.setTextColor(75, 85, 99);
       doc.setFont("helvetica", "bold");
-      doc.text("N. Hasanboy", pageWidth - 67.5, signatureY - 8, {
+      doc.text("D.Rustamov", pageWidth - 67.5, signatureY - 8, {
         align: "center",
       });
       doc.setFontSize(10);
       doc.setFont("helvetica", "normal");
-      doc.text("Program Director", pageWidth - 67.5, signatureY + 6, {
+      doc.text("Director", pageWidth - 67.5, signatureY + 6, {
         align: "center",
       });
 
@@ -407,8 +407,12 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
     if (!newTestName.trim()) return;
 
     // Convert datetime-local to ISO string to preserve local timezone
-    const startDateISO = newTestStartDate ? new Date(newTestStartDate).toISOString() : null;
-    const endDateISO = newTestEndDate ? new Date(newTestEndDate).toISOString() : null;
+    const startDateISO = newTestStartDate
+      ? new Date(newTestStartDate).toISOString()
+      : null;
+    const endDateISO = newTestEndDate
+      ? new Date(newTestEndDate).toISOString()
+      : null;
 
     const newTest = {
       id: `test-${Date.now()}`,
@@ -840,7 +844,9 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                           <input
                             type="datetime-local"
                             value={newTestStartDate}
-                            onChange={(e) => setNewTestStartDate(e.target.value)}
+                            onChange={(e) =>
+                              setNewTestStartDate(e.target.value)
+                            }
                             className="w-full px-2 py-2 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100 transition-all text-gray-900 text-xs"
                           />
                         </div>
@@ -967,7 +973,9 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                   <div className="text-lg sm:text-xl md:text-2xl font-bold text-blue-600">
                     {editingTest.questions.length}
                   </div>
-                  <div className="text-[9px] sm:text-xs text-gray-500 whitespace-nowrap">Total</div>
+                  <div className="text-[9px] sm:text-xs text-gray-500 whitespace-nowrap">
+                    Total
+                  </div>
                 </div>
               </div>
 
@@ -992,224 +1000,230 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                           className="px-2 sm:px-3 py-1.5 sm:py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-semibold text-[10px] sm:text-xs md:text-sm transition-all hover:shadow-lg flex items-center gap-1 sm:gap-2"
                         >
                           <FaRobot className="text-xs sm:text-sm" />
-                          <span className="hidden sm:inline">{showAIGenerator
-                            ? "Hide AI Generator"
-                            : "Generate with AI"}</span>
+                          <span className="hidden sm:inline">
+                            {showAIGenerator
+                              ? "Hide AI Generator"
+                              : "Generate with AI"}
+                          </span>
                           <span className="sm:hidden">AI</span>
                         </button>
                         <h3 className="text-xs sm:text-sm md:text-base font-bold text-gray-800 flex items-center gap-1 sm:gap-2">
                           <FaListOl className="text-purple-600 text-[10px] sm:text-xs md:text-sm" />
-                          <span className="hidden sm:inline">Questions List</span>
+                          <span className="hidden sm:inline">
+                            Questions List
+                          </span>
                           <span className="sm:hidden">Questions</span>
                         </h3>
                         <span className="text-[9px] sm:text-xs bg-purple-100 text-purple-700 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full font-semibold">
                           {editingTest.questions.length}
                         </span>
                       </div>
-                    <div className="space-y-1.5 sm:space-y-2 max-h-[calc(100vh-350px)] overflow-y-auto pr-1 sm:pr-2">
-                      {editingTest.questions.length === 0 && (
-                        <div className="text-center py-4 sm:py-6 md:py-8 text-gray-400 bg-gray-50 rounded-lg border border-dashed border-gray-300">
-                          <FaQuestionCircle className="text-xl sm:text-2xl md:text-3xl mx-auto mb-2 opacity-50" />
-                          <p className="text-[10px] sm:text-xs">No questions added yet</p>
-                        </div>
-                      )}
-                      {editingTest.questions.map((q, index) => (
-                        <div
-                          key={q.id}
-                          className="group p-2 sm:p-2.5 md:p-3 bg-gradient-to-r from-gray-50 to-white rounded-lg border border-gray-200 hover:border-purple-300 hover:shadow-sm transition-all"
-                        >
-                          <div className="flex justify-between items-start mb-1 sm:mb-1.5 md:mb-2">
-                            <span className="flex items-center gap-1 sm:gap-1.5 font-bold text-purple-600 text-[10px] sm:text-xs">
-                              <span className="w-4 h-4 sm:w-5 sm:h-5 bg-purple-100 rounded flex items-center justify-center text-[9px] sm:text-[10px]">
-                                {index + 1}
-                              </span>
-                            </span>
-                            <div className="flex gap-0.5 sm:gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-                              <button
-                                onClick={() => handleEditQuestion(q)}
-                                className="p-1 sm:p-1.5 rounded-md sm:rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 transition-all"
-                                title="Edit Question"
-                              >
-                                <FaEdit className="text-[10px] sm:text-xs" />
-                              </button>
-                              <button
-                                onClick={() => handleDeleteQuestion(q.id)}
-                                className="p-1 sm:p-1.5 rounded-md sm:rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition-all"
-                                title="Delete Question"
-                              >
-                                <FaTrash className="text-[10px] sm:text-xs" />
-                              </button>
-                            </div>
-                          </div>
-                          <p className="text-[10px] sm:text-xs text-gray-900 font-medium mb-1 sm:mb-1.5 md:mb-2 line-clamp-2">
-                            {q.question}
-                          </p>
-                          <div className="space-y-0.5 sm:space-y-1">
-                            {q.options.map((opt, i) => (
-                              <div
-                                key={i}
-                                className={`text-[9px] sm:text-[10px] md:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded flex items-center gap-1 sm:gap-1.5 ${
-                                  i === q.answer
-                                    ? "bg-green-50 text-green-700 font-semibold border border-green-300"
-                                    : "bg-white text-gray-500 border border-gray-200"
-                                }`}
-                              >
-                                {i === q.answer && (
-                                  <FaCheckCircle className="text-green-600 flex-shrink-0 text-[8px] sm:text-[10px]" />
-                                )}
-                                <span className="font-bold mr-0.5 sm:mr-1">
-                                  {String.fromCharCode(65 + i)})
-                                </span>
-                                <span className="flex-1 truncate">{opt}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Add/Edit Question Form - Collapsible on Mobile */}
-                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
-                    <div
-                      className="flex justify-between items-center p-4 cursor-pointer md:cursor-default"
-                      onClick={() => setShowQuestionForm(!showQuestionForm)}
-                    >
-                      <h3 className="text-sm md:text-base font-bold text-gray-800 flex items-center gap-2">
-                        {editingQuestion ? (
-                          <>
-                            <div className="w-6 h-6 md:w-7 md:h-7 bg-blue-600 rounded-lg flex items-center justify-center">
-                              <FaEdit className="text-white text-xs" />
-                            </div>
-                            <span className="text-xs md:text-sm">
-                              Edit Question
-                            </span>
-                          </>
-                        ) : (
-                          <>
-                            <div className="w-6 h-6 md:w-7 md:h-7 bg-green-600 rounded-lg flex items-center justify-center">
-                              <FaPlus className="text-white text-xs" />
-                            </div>
-                            <span className="text-xs md:text-sm">
-                              Add Question
-                            </span>
-                          </>
-                        )}
-                      </h3>
-                      <div className="md:hidden">
-                        {showQuestionForm ? "▼" : "▶"}
-                      </div>
-                    </div>
-
-                    <div
-                      className={`${
-                        showQuestionForm ? "block" : "hidden md:block"
-                      } p-4 pt-0 md:pt-4`}
-                    >
-                      <div className="space-y-3">
-                        <div>
-                          <label className="flex items-center gap-1.5 text-gray-700 font-semibold mb-2 text-sm md:text-xs">
-                            <FaQuestionCircle className="text-blue-600 text-sm md:text-xs" />
-                            Question Text *
-                          </label>
-                          <textarea
-                            value={questionText}
-                            onChange={(e) => setQuestionText(e.target.value)}
-                            className="w-full px-4 py-3 md:px-3 md:py-2 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 resize-none text-gray-900 text-base md:text-sm transition-all touch-manipulation"
-                            rows="4"
-                            placeholder="Type your question here..."
-                          />
-                        </div>
-
-                        <div>
-                          <label className="flex items-center gap-1.5 text-gray-700 font-semibold mb-3 text-sm md:text-xs">
-                            <FaListOl className="text-purple-600 text-sm md:text-xs" />
-                            Answer Options *
-                          </label>
-                          {options.map((opt, index) => (
-                            <div
-                              key={index}
-                              className="flex items-center gap-3 mb-3"
-                            >
-                              <input
-                                type="radio"
-                                name="correct"
-                                checked={correctAnswer === index}
-                                onChange={() => setCorrectAnswer(index)}
-                                className="w-5 h-5 md:w-4 md:h-4 cursor-pointer accent-green-600 flex-shrink-0 touch-manipulation"
-                                title="Mark as correct answer"
-                              />
-                              <div className="flex-1 relative">
-                                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 w-7 h-7 md:w-6 md:h-6 bg-gradient-to-br from-blue-100 to-indigo-100 rounded flex items-center justify-center shadow-sm z-10">
-                                  <span className="font-bold text-blue-700 text-sm md:text-xs">
-                                    {String.fromCharCode(65 + index)}
-                                  </span>
-                                </div>
-                                <input
-                                  type="text"
-                                  value={opt}
-                                  onChange={(e) => {
-                                    const newOpts = [...options];
-                                    newOpts[index] = e.target.value;
-                                    setOptions(newOpts);
-                                  }}
-                                  className={`w-full pl-12 md:pl-10 pr-4 py-3 md:py-2 bg-white border-2 rounded-lg focus:outline-none focus:ring-2 transition-all text-gray-900 text-base md:text-sm touch-manipulation ${
-                                    correctAnswer === index
-                                      ? "border-green-400 focus:border-green-500 focus:ring-green-100 bg-green-50 font-semibold"
-                                      : "border-gray-300 focus:border-blue-500 focus:ring-blue-100"
-                                  }`}
-                                  placeholder={`Enter option ${String.fromCharCode(
-                                    65 + index
-                                  )}`}
-                                />
-                              </div>
-                            </div>
-                          ))}
-                          <div className="bg-green-50 border border-green-200 rounded-lg p-2 mt-2 flex items-center gap-2">
-                            <FaCheckCircle className="text-green-600 text-xs" />
-                            <p className="text-green-700 text-xs font-medium">
-                              Click radio button to mark the correct answer
+                      <div className="space-y-1.5 sm:space-y-2 max-h-[calc(100vh-350px)] overflow-y-auto pr-1 sm:pr-2">
+                        {editingTest.questions.length === 0 && (
+                          <div className="text-center py-4 sm:py-6 md:py-8 text-gray-400 bg-gray-50 rounded-lg border border-dashed border-gray-300">
+                            <FaQuestionCircle className="text-xl sm:text-2xl md:text-3xl mx-auto mb-2 opacity-50" />
+                            <p className="text-[10px] sm:text-xs">
+                              No questions added yet
                             </p>
                           </div>
-                        </div>
+                        )}
+                        {editingTest.questions.map((q, index) => (
+                          <div
+                            key={q.id}
+                            className="group p-2 sm:p-2.5 md:p-3 bg-gradient-to-r from-gray-50 to-white rounded-lg border border-gray-200 hover:border-purple-300 hover:shadow-sm transition-all"
+                          >
+                            <div className="flex justify-between items-start mb-1 sm:mb-1.5 md:mb-2">
+                              <span className="flex items-center gap-1 sm:gap-1.5 font-bold text-purple-600 text-[10px] sm:text-xs">
+                                <span className="w-4 h-4 sm:w-5 sm:h-5 bg-purple-100 rounded flex items-center justify-center text-[9px] sm:text-[10px]">
+                                  {index + 1}
+                                </span>
+                              </span>
+                              <div className="flex gap-0.5 sm:gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                                <button
+                                  onClick={() => handleEditQuestion(q)}
+                                  className="p-1 sm:p-1.5 rounded-md sm:rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 transition-all"
+                                  title="Edit Question"
+                                >
+                                  <FaEdit className="text-[10px] sm:text-xs" />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteQuestion(q.id)}
+                                  className="p-1 sm:p-1.5 rounded-md sm:rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition-all"
+                                  title="Delete Question"
+                                >
+                                  <FaTrash className="text-[10px] sm:text-xs" />
+                                </button>
+                              </div>
+                            </div>
+                            <p className="text-[10px] sm:text-xs text-gray-900 font-medium mb-1 sm:mb-1.5 md:mb-2 line-clamp-2">
+                              {q.question}
+                            </p>
+                            <div className="space-y-0.5 sm:space-y-1">
+                              {q.options.map((opt, i) => (
+                                <div
+                                  key={i}
+                                  className={`text-[9px] sm:text-[10px] md:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded flex items-center gap-1 sm:gap-1.5 ${
+                                    i === q.answer
+                                      ? "bg-green-50 text-green-700 font-semibold border border-green-300"
+                                      : "bg-white text-gray-500 border border-gray-200"
+                                  }`}
+                                >
+                                  {i === q.answer && (
+                                    <FaCheckCircle className="text-green-600 flex-shrink-0 text-[8px] sm:text-[10px]" />
+                                  )}
+                                  <span className="font-bold mr-0.5 sm:mr-1">
+                                    {String.fromCharCode(65 + i)})
+                                  </span>
+                                  <span className="flex-1 truncate">{opt}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
 
-                        <div className="flex gap-2 mt-4 pt-3 border-t border-blue-200">
+                    {/* Add/Edit Question Form - Collapsible on Mobile */}
+                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+                      <div
+                        className="flex justify-between items-center p-4 cursor-pointer md:cursor-default"
+                        onClick={() => setShowQuestionForm(!showQuestionForm)}
+                      >
+                        <h3 className="text-sm md:text-base font-bold text-gray-800 flex items-center gap-2">
                           {editingQuestion ? (
                             <>
-                              <button
-                                onClick={handleUpdateQuestion}
-                                className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3 md:py-2.5 rounded-lg font-semibold transition-all hover:shadow-lg hover:scale-105 text-base md:text-sm touch-manipulation"
-                              >
-                                <FaSave className="text-sm md:text-xs" />
-                                Save Changes
-                              </button>
-                              <button
-                                onClick={() => {
-                                  setEditingQuestion(null);
-                                  setQuestionText("");
-                                  setOptions(["", "", "", ""]);
-                                  setCorrectAnswer(0);
-                                }}
-                                className="px-4 flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-700 py-3 md:py-2.5 rounded-lg font-semibold transition-all text-base md:text-sm border-2 border-gray-300 hover:border-gray-400 touch-manipulation"
-                              >
-                                <FaTimes className="text-sm md:text-xs" />
-                                Cancel
-                              </button>
+                              <div className="w-6 h-6 md:w-7 md:h-7 bg-blue-600 rounded-lg flex items-center justify-center">
+                                <FaEdit className="text-white text-xs" />
+                              </div>
+                              <span className="text-xs md:text-sm">
+                                Edit Question
+                              </span>
                             </>
                           ) : (
-                            <button
-                              onClick={handleAddQuestion}
-                              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white py-3 md:py-2.5 rounded-lg font-semibold transition-all hover:shadow-lg hover:scale-105 text-base md:text-sm touch-manipulation"
-                            >
-                              <FaPlus className="text-sm md:text-xs" />
-                              Add Question
-                            </button>
+                            <>
+                              <div className="w-6 h-6 md:w-7 md:h-7 bg-green-600 rounded-lg flex items-center justify-center">
+                                <FaPlus className="text-white text-xs" />
+                              </div>
+                              <span className="text-xs md:text-sm">
+                                Add Question
+                              </span>
+                            </>
                           )}
+                        </h3>
+                        <div className="md:hidden">
+                          {showQuestionForm ? "▼" : "▶"}
+                        </div>
+                      </div>
+
+                      <div
+                        className={`${
+                          showQuestionForm ? "block" : "hidden md:block"
+                        } p-4 pt-0 md:pt-4`}
+                      >
+                        <div className="space-y-3">
+                          <div>
+                            <label className="flex items-center gap-1.5 text-gray-700 font-semibold mb-2 text-sm md:text-xs">
+                              <FaQuestionCircle className="text-blue-600 text-sm md:text-xs" />
+                              Question Text *
+                            </label>
+                            <textarea
+                              value={questionText}
+                              onChange={(e) => setQuestionText(e.target.value)}
+                              className="w-full px-4 py-3 md:px-3 md:py-2 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 resize-none text-gray-900 text-base md:text-sm transition-all touch-manipulation"
+                              rows="4"
+                              placeholder="Type your question here..."
+                            />
+                          </div>
+
+                          <div>
+                            <label className="flex items-center gap-1.5 text-gray-700 font-semibold mb-3 text-sm md:text-xs">
+                              <FaListOl className="text-purple-600 text-sm md:text-xs" />
+                              Answer Options *
+                            </label>
+                            {options.map((opt, index) => (
+                              <div
+                                key={index}
+                                className="flex items-center gap-3 mb-3"
+                              >
+                                <input
+                                  type="radio"
+                                  name="correct"
+                                  checked={correctAnswer === index}
+                                  onChange={() => setCorrectAnswer(index)}
+                                  className="w-5 h-5 md:w-4 md:h-4 cursor-pointer accent-green-600 flex-shrink-0 touch-manipulation"
+                                  title="Mark as correct answer"
+                                />
+                                <div className="flex-1 relative">
+                                  <div className="absolute left-3 top-1/2 transform -translate-y-1/2 w-7 h-7 md:w-6 md:h-6 bg-gradient-to-br from-blue-100 to-indigo-100 rounded flex items-center justify-center shadow-sm z-10">
+                                    <span className="font-bold text-blue-700 text-sm md:text-xs">
+                                      {String.fromCharCode(65 + index)}
+                                    </span>
+                                  </div>
+                                  <input
+                                    type="text"
+                                    value={opt}
+                                    onChange={(e) => {
+                                      const newOpts = [...options];
+                                      newOpts[index] = e.target.value;
+                                      setOptions(newOpts);
+                                    }}
+                                    className={`w-full pl-12 md:pl-10 pr-4 py-3 md:py-2 bg-white border-2 rounded-lg focus:outline-none focus:ring-2 transition-all text-gray-900 text-base md:text-sm touch-manipulation ${
+                                      correctAnswer === index
+                                        ? "border-green-400 focus:border-green-500 focus:ring-green-100 bg-green-50 font-semibold"
+                                        : "border-gray-300 focus:border-blue-500 focus:ring-blue-100"
+                                    }`}
+                                    placeholder={`Enter option ${String.fromCharCode(
+                                      65 + index
+                                    )}`}
+                                  />
+                                </div>
+                              </div>
+                            ))}
+                            <div className="bg-green-50 border border-green-200 rounded-lg p-2 mt-2 flex items-center gap-2">
+                              <FaCheckCircle className="text-green-600 text-xs" />
+                              <p className="text-green-700 text-xs font-medium">
+                                Click radio button to mark the correct answer
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex gap-2 mt-4 pt-3 border-t border-blue-200">
+                            {editingQuestion ? (
+                              <>
+                                <button
+                                  onClick={handleUpdateQuestion}
+                                  className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3 md:py-2.5 rounded-lg font-semibold transition-all hover:shadow-lg hover:scale-105 text-base md:text-sm touch-manipulation"
+                                >
+                                  <FaSave className="text-sm md:text-xs" />
+                                  Save Changes
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setEditingQuestion(null);
+                                    setQuestionText("");
+                                    setOptions(["", "", "", ""]);
+                                    setCorrectAnswer(0);
+                                  }}
+                                  className="px-4 flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-700 py-3 md:py-2.5 rounded-lg font-semibold transition-all text-base md:text-sm border-2 border-gray-300 hover:border-gray-400 touch-manipulation"
+                                >
+                                  <FaTimes className="text-sm md:text-xs" />
+                                  Cancel
+                                </button>
+                              </>
+                            ) : (
+                              <button
+                                onClick={handleAddQuestion}
+                                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white py-3 md:py-2.5 rounded-lg font-semibold transition-all hover:shadow-lg hover:scale-105 text-base md:text-sm touch-manipulation"
+                              >
+                                <FaPlus className="text-sm md:text-xs" />
+                                Add Question
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
                 </>
               )}
             </div>
@@ -1524,7 +1538,9 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                         onChange={(e) => setGrade(e.target.value)}
                         className="w-full px-3 sm:px-4 py-2 sm:py-2.5 md:py-3 bg-gray-50 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 text-gray-900 text-sm sm:text-base"
                       >
-                        <option value="Outstanding">Outstanding ⭐⭐⭐⭐⭐</option>
+                        <option value="Outstanding">
+                          Outstanding ⭐⭐⭐⭐⭐
+                        </option>
                         <option value="Excellent">Excellent ⭐⭐⭐⭐</option>
                         <option value="Very Good">Very Good ⭐⭐⭐</option>
                         <option value="Good">Good ⭐⭐</option>
@@ -1546,12 +1562,18 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
 
                     <div className="flex flex-col sm:flex-row gap-3 pt-4">
                       <button
-                        onClick={() => setShowCertificatePreview(!showCertificatePreview)}
+                        onClick={() =>
+                          setShowCertificatePreview(!showCertificatePreview)
+                        }
                         className="flex-1 flex items-center justify-center gap-2 px-4 sm:px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-xl transition-all shadow-md hover:shadow-lg text-sm sm:text-base"
                       >
                         <FaAward />
-                        <span className="hidden sm:inline">{showCertificatePreview ? "Hide" : "Show"} Preview</span>
-                        <span className="sm:hidden">{showCertificatePreview ? "Hide" : "Preview"}</span>
+                        <span className="hidden sm:inline">
+                          {showCertificatePreview ? "Hide" : "Show"} Preview
+                        </span>
+                        <span className="sm:hidden">
+                          {showCertificatePreview ? "Hide" : "Preview"}
+                        </span>
                       </button>
                       <button
                         onClick={generateCertificatePDF}
@@ -1572,7 +1594,10 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                   </h2>
 
                   {showCertificatePreview && studentName ? (
-                    <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 border-2 md:border-4 border-blue-500 rounded-lg shadow-2xl p-4 md:p-8 relative min-h-[300px] md:min-h-[500px]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                    <div
+                      className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 border-2 md:border-4 border-blue-500 rounded-lg shadow-2xl p-4 md:p-8 relative min-h-[300px] md:min-h-[500px]"
+                      style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                    >
                       {/* Decorative corners */}
                       <div className="absolute top-0 left-0 w-12 h-12 md:w-20 md:h-20 border-t-2 md:border-t-4 border-l-2 md:border-l-4 border-purple-500"></div>
                       <div className="absolute top-0 right-0 w-12 h-12 md:w-20 md:h-20 border-t-2 md:border-t-4 border-r-2 md:border-r-4 border-purple-500"></div>
@@ -1581,14 +1606,18 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
 
                       {/* Content */}
                       <div className="relative z-10 h-full flex flex-col items-center justify-center text-center space-y-2 md:space-y-4">
-                        <p className="text-xs md:text-sm text-gray-500 uppercase tracking-widest font-medium">Certificate</p>
+                        <p className="text-xs md:text-sm text-gray-500 uppercase tracking-widest font-medium">
+                          Certificate
+                        </p>
                         <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent tracking-tight">
                           of Excellence
                         </h1>
 
                         <div className="w-24 md:w-40 h-0.5 md:h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent my-1 md:my-2"></div>
 
-                        <p className="text-xs md:text-sm text-gray-600 italic mt-2 md:mt-4 font-light">Presented to</p>
+                        <p className="text-xs md:text-sm text-gray-600 italic mt-2 md:mt-4 font-light">
+                          Presented to
+                        </p>
 
                         <h2 className="text-xl md:text-3xl lg:text-4xl font-bold text-blue-900 px-2 md:px-4 py-1 md:py-2 tracking-wide">
                           {studentName}
@@ -1603,24 +1632,35 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                         </h3>
 
                         <p className="text-xs md:text-sm text-gray-600 mt-2 md:mt-3 font-light">
-                          with <span className="font-semibold text-gray-800">{grade}</span> performance
+                          with{" "}
+                          <span className="font-semibold text-gray-800">
+                            {grade}
+                          </span>{" "}
+                          performance
                         </p>
 
                         <div className="w-24 md:w-40 h-0.5 md:h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent my-2 md:my-3"></div>
 
                         <p className="text-xs md:text-sm text-gray-500 mt-2 md:mt-4 mb-3 md:mb-6 font-medium">
-                          {new Date(completionDate).toLocaleDateString("en-US", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          })}
+                          {new Date(completionDate).toLocaleDateString(
+                            "en-US",
+                            {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            }
+                          )}
                         </p>
 
                         <div className="flex justify-between w-full pt-3 md:pt-6 px-4 md:px-8 mt-3 md:mt-6">
                           <div className="text-center">
                             <div className="w-16 md:w-28 h-0.5 bg-gray-400 mb-1 md:mb-2"></div>
-                            <p className="text-[10px] md:text-xs font-semibold text-gray-700 tracking-wide">Miss Nora</p>
-                            <p className="text-[8px] md:text-[10px] text-gray-500 font-light">Teacher</p>
+                            <p className="text-[10px] md:text-xs font-semibold text-gray-700 tracking-wide">
+                              Samiyeva Gulnora
+                            </p>
+                            <p className="text-[8px] md:text-[10px] text-gray-500 font-light">
+                              Teacher
+                            </p>
                           </div>
                           <div className="flex items-center justify-center">
                             <div className="w-10 h-10 md:w-16 md:h-16 rounded-full border-2 md:border-3 border-yellow-500 bg-yellow-50 flex items-center justify-center shadow-lg">
@@ -1629,8 +1669,12 @@ function AdminPanel({ testSets, onSave, onLogout, apiUrl }) {
                           </div>
                           <div className="text-center">
                             <div className="w-16 md:w-28 h-0.5 bg-gray-400 mb-1 md:mb-2"></div>
-                            <p className="text-[10px] md:text-xs font-semibold text-gray-700 tracking-wide">N. Hasanboy</p>
-                            <p className="text-[8px] md:text-[10px] text-gray-500 font-light">Director</p>
+                            <p className="text-[10px] md:text-xs font-semibold text-gray-700 tracking-wide">
+                              D.Rustamov
+                            </p>
+                            <p className="text-[8px] md:text-[10px] text-gray-500 font-light">
+                              Director
+                            </p>
                           </div>
                         </div>
                       </div>
