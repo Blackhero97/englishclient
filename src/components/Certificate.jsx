@@ -83,12 +83,9 @@ function Certificate() {
       doc.setFontSize(14);
       doc.setTextColor(60, 60, 60);
       doc.setFont(undefined, "normal");
-      doc.text(
-        "has successfully completed the",
-        pageWidth / 2,
-        110,
-        { align: "center" }
-      );
+      doc.text("has successfully completed the", pageWidth / 2, 110, {
+        align: "center",
+      });
 
       // Course name
       doc.setFontSize(20);
@@ -100,22 +97,16 @@ function Certificate() {
       doc.setFontSize(14);
       doc.setTextColor(60, 60, 60);
       doc.setFont(undefined, "normal");
-      doc.text(
-        `with ${grade} performance`,
-        pageWidth / 2,
-        138,
-        { align: "center" }
-      );
+      doc.text(`with ${grade} performance`, pageWidth / 2, 138, {
+        align: "center",
+      });
 
       // Date
       doc.setFontSize(12);
       doc.setTextColor(100, 100, 100);
-      doc.text(
-        `Issued on ${completionDate}`,
-        pageWidth / 2,
-        155,
-        { align: "center" }
-      );
+      doc.text(`Issued on ${completionDate}`, pageWidth / 2, 155, {
+        align: "center",
+      });
 
       // Signature section
       const signatureY = 175;
@@ -125,13 +116,21 @@ function Certificate() {
       doc.line(40, signatureY, 90, signatureY);
       doc.setFontSize(11);
       doc.setTextColor(60, 60, 60);
-      doc.text("Instructor Signature", 65, signatureY + 7, { align: "center" });
+      doc.text("Samiyeva Gulnora", 65, signatureY + 2, { align: "center" });
+      doc.setFontSize(9);
+      doc.setTextColor(120, 120, 120);
+      doc.text("English Teacher", 65, signatureY + 8, { align: "center" });
 
       // Right signature (Director)
+      doc.setFontSize(11);
+      doc.setTextColor(60, 60, 60);
       doc.line(pageWidth - 90, signatureY, pageWidth - 40, signatureY);
-      doc.text("Director Signature", pageWidth - 65, signatureY + 7, {
+      doc.text("D.Rustamov", pageWidth - 65, signatureY + 2, {
         align: "center",
       });
+      doc.setFontSize(9);
+      doc.setTextColor(120, 120, 120);
+      doc.text("Director", pageWidth - 65, signatureY + 8, { align: "center" });
 
       // Certificate seal/stamp (decorative circle)
       doc.setDrawColor(184, 134, 11);
@@ -352,9 +351,8 @@ function Certificate() {
                   <div className="flex justify-between w-full pt-6 px-8">
                     <div className="text-center">
                       <div className="w-32 h-0.5 bg-gray-400 mb-1"></div>
-                      <p className="text-xs text-gray-600">
-                        Instructor Signature
-                      </p>
+                      <p className="text-xs text-gray-600">Samiyeva Gulnora</p>
+                      <p className="text-xs text-gray-400">English Teacher</p>
                     </div>
                     <div className="flex items-center justify-center">
                       <div className="w-20 h-20 rounded-full border-4 border-yellow-600 flex items-center justify-center bg-yellow-50">
@@ -363,9 +361,8 @@ function Certificate() {
                     </div>
                     <div className="text-center">
                       <div className="w-32 h-0.5 bg-gray-400 mb-1"></div>
-                      <p className="text-xs text-gray-600">
-                        Director Signature
-                      </p>
+                      <p className="text-xs text-gray-600">D.Rustamov</p>
+                      <p className="text-xs text-gray-400">Director</p>
                     </div>
                   </div>
                 </div>
